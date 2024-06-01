@@ -1,0 +1,11 @@
+created:
+    - database/factories/ArticleFactory.php
+    - database/factories/CategoryFactory.php
+    - database/migrations/2024_06_01_010013_create_articles_table.php
+    - database/migrations/2024_06_01_010014_create_categories_table.php
+    - app/Models/Article.php
+    - app/Models/Category.php
+models:
+    User: { name: string, email: string, email_verified_at: 'timestamp nullable', password: string, remember_token: 'string:100 nullable' }
+    Article: { title: string, slug: string, content: longtext, category_id: id, user_id: id }
+    Category: { name: string, slug: string, relationships: { hasMany: Article } }
