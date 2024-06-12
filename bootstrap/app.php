@@ -23,13 +23,13 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (ValidationException $exception, Request $request) {
             if ($request->expectsJson()) {
-                $title = str_replace(".","/",)
+                $title = $exception->getMessage();
                 collect($exception->errors())
-                    ->map(function ($messages, $key) {
+                    ->map(function ($messages, $field) use ($title) {
                         return [
-                            "title" => "lo que sea",
+                            "title" => $title,
                             "detail" => "detalles",
-                            "source" => ["pointer" => '/data/attributes/title']
+                            "source" => ["pointer" => "/" . str_replace(".", "/", $field)]
                         ];
                     });
 
