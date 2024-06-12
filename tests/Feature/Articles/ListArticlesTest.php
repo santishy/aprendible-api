@@ -11,8 +11,7 @@ class ListArticlesTest extends TestCase
 {
     use RefreshDatabase;
 
-    /** @test */
-    public function can_fetch_a_single_article()
+    public function test_can_fetch_a_single_article()
     {
         //$this->withoutExceptionHandling();
         $article = Article::factory()->create();
@@ -34,7 +33,7 @@ class ListArticlesTest extends TestCase
         ]);
     }
     /** @test */
-    public function can_fetch_all_articles()
+    public function test_can_fetch_all_articles()
     {
         $this->withoutExceptionHandling();
         $articles = Article::factory()->count(3)->create();
