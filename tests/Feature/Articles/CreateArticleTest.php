@@ -60,7 +60,7 @@ class CreateArticleTest extends TestCase
                     "self" => route('api.v1.articles.create')
                 ]
             ]
-        ])->dump();
+        ]);
 
         //$response->assertJsonValidationErrors('data.attributes.title');
 
@@ -76,7 +76,9 @@ class CreateArticleTest extends TestCase
             "source" => [
                 "pointer" => "/data/attributes/title"
             ]
-        ]);
+        ])->assertStatus(422);
+
+        $response->assertHeader("content-type", "application/vnd.api+json");
     }
     public function test_slug_is_required(): void
     {

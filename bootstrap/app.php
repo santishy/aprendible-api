@@ -24,19 +24,28 @@ return Application::configure(basePath: dirname(__DIR__))
         $exceptions->render(function (ValidationException $exception, Request $request) {
             if ($request->expectsJson()) {
                 $title = $exception->getMessage();
-                collect($exception->errors())
-                    ->map(function ($messages, $field) use ($title) {
-                        return [
-                            "title" => $title,
-                            "detail" => "detalles",
-                            "source" => ["pointer" => "/" . str_replace(".", "/", $field)]
-                        ];
-                    });
 
+                $errors = [];
 
+                // foreach ($exception->errors() as $field => $messages) {
+                //     $errors[] = [
+                //         "title" => $title,
+                //         "detail" => $messages[0],
+                //         "source" => [
+                //             "pointer" => "/" . str_replace(".", "/", $field)
+                //         ]
+                //     ];
+                // }
                 return response()->json([
-                    "errors" => []
-                ]);
+                    "errors" => collect($exception->errors())
+                        ->map(function ($messages, $field) use ($title) {
+                            return [
+                                "title" => $title,
+                                "detail" => $messages[0],
+                                "source" => ["pointer" => "/" . str_replace(".", "/", $field)]
+                            ];
+                        })->values()
+                ], 422);
             }
 
             return null;
