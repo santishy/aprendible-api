@@ -25,6 +25,7 @@ class ValidateJsonApiHeaders
                 throw new HttpException(415, __("Unsupported media type"));
             }
         }
+        /**@var Response $next */
         return $next($request)->withHeaders([
             "content-type" => "application/vnd.api+json"
         ]);

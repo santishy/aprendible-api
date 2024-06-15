@@ -22,20 +22,11 @@ return Application::configure(basePath: dirname(__DIR__))
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (ValidationException $exception, Request $request) {
+
             if ($request->expectsJson()) {
+
                 $title = $exception->getMessage();
 
-                $errors = [];
-
-                // foreach ($exception->errors() as $field => $messages) {
-                //     $errors[] = [
-                //         "title" => $title,
-                //         "detail" => $messages[0],
-                //         "source" => [
-                //             "pointer" => "/" . str_replace(".", "/", $field)
-                //         ]
-                //     ];
-                // }
                 return response()->json([
                     "errors" => collect($exception->errors())
                         ->map(function ($messages, $field) use ($title) {
@@ -45,7 +36,7 @@ return Application::configure(basePath: dirname(__DIR__))
                                 "source" => ["pointer" => "/" . str_replace(".", "/", $field)]
                             ];
                         })->values()
-                ], 422);
+                ], 422)->withHeaders(["content-type" => "application/vnd.api+json"]);
             }
 
             return null;
