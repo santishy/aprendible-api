@@ -1,6 +1,8 @@
 <?php
 
+use App\Http\Middleware\ValidateJsonApiDocument;
 use App\Http\Middleware\ValidateJsonApiHeaders;
+use App\Http\Responses\JsonApiValidationErrorResponse;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
@@ -17,26 +19,15 @@ return Application::configure(basePath: dirname(__DIR__))
     )
     ->withMiddleware(function (Middleware $middleware) {
         $middleware->api(append: [
-            ValidateJsonApiHeaders::class
+            ValidateJsonApiHeaders::class,
+            ValidateJsonApiDocument::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (ValidationException $exception, Request $request) {
 
             if ($request->expectsJson()) {
-
-                $title = $exception->getMessage();
-
-                return response()->json([
-                    "errors" => collect($exception->errors())
-                        ->map(function ($messages, $field) use ($title) {
-                            return [
-                                "title" => $title,
-                                "detail" => $messages[0],
-                                "source" => ["pointer" => "/" . str_replace(".", "/", $field)]
-                            ];
-                        })->values()
-                ], 422)->withHeaders(["content-type" => "application/vnd.api+json"]);
+                return new JsonApiValidationErrorResponse($exception);
             }
 
             return null;

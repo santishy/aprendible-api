@@ -32,7 +32,6 @@ class ListArticlesTest extends TestCase
             ]
         ]);
     }
-    /** @test */
     public function test_can_fetch_all_articles()
     {
         $this->withoutExceptionHandling();

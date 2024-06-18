@@ -22,6 +22,9 @@ class ValidateJsonApiDocument
                 "data.attributes" => ["required", "array"]
             ]);
         }
+        if ($request->isMethod('PATCH')) {
+            $request->validate(["data.id" => ["required", "string"]]);
+        }
         return $next($request);
     }
 }
