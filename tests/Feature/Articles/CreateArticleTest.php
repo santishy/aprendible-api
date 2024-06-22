@@ -48,17 +48,17 @@ class CreateArticleTest extends TestCase
     {
         // $this->withoutExceptionHandling();
         $response = $this->postJson(route('api.v1.articles.store'), [
-            "data" => [
-                "type" => "articles",
-                "attributes" => [
-                    // "title" => "el titulo es requerido",
-                    "slug" => "Nuevo-producto",
-                    "content" => "nuevo contenido"
-                ],
-                "links" => [
-                    "self" => route('api.v1.articles.store')
-                ]
-            ]
+            // "data" => [
+            //     "type" => "articles",
+            //     "attributes" => [
+            // "title" => "el titulo es requerido",
+            "slug" => "Nuevo-producto",
+            "content" => "nuevo contenido"
+            // ],
+            // "links" => [
+            //     "self" => route('api.v1.articles.store')
+            // ]
+            //]
         ]);
 
         $response->assertJsonApiValidationErrors('title');
@@ -67,16 +67,16 @@ class CreateArticleTest extends TestCase
     {
         //$this->withoutExceptionHandling();
         $response = $this->postJson(route('api.v1.articles.store'), [
-            "data" => [
-                "type" => "articles",
-                "attributes" => [
-                    "title" => "Nuevo producto",
-                    "content" => "nuevo contenido"
-                ],
-                "links" => [
-                    "self" => route('api.v1.articles.store')
-                ]
-            ]
+            // "data" => [
+            //     "type" => "articles",
+            //     "attributes" => [
+            "title" => "Nuevo producto",
+            "content" => "nuevo contenido"
+            // ],
+            // "links" => [
+            //     "self" => route('api.v1.articles.store')
+            // ]
+            // ]
         ]);
 
         $response->assertJsonApiValidationErrors('slug');
@@ -85,16 +85,10 @@ class CreateArticleTest extends TestCase
     {
         //$this->withoutExceptionHandling();
         $response = $this->postJson(route('api.v1.articles.store'), [
-            "data" => [
-                "type" => "articles",
-                "attributes" => [
-                    "title" => "Nuevo producto",
-                    "slug" => "nuevo-producto"
-                ],
-                "links" => [
-                    "self" => route('api.v1.articles.store')
-                ]
-            ]
+
+            "title" => "Nuevo producto",
+            "slug" => "nuevo-producto"
+
         ]);
 
         $response->assertJsonApiValidationErrors('content');
@@ -103,17 +97,9 @@ class CreateArticleTest extends TestCase
     public function test_title_must_be_at_least_4_characters()
     {
         $response = $this->postJson(route('api.v1.articles.store'), [
-            "data" => [
-                "type" => "articles",
-                "attributes" => [
-                    "title" => "123",
-                    "slug" => "nuevo-producto",
-                    "content" => "contenido nuevo",
-                ],
-                "links" => [
-                    "self" => route('api.v1.articles.store')
-                ]
-            ]
+            "title" => "123",
+            "slug" => "nuevo-producto",
+            "content" => "contenido nuevo",
         ]);
 
         $response->assertJsonApiValidationErrors('title');
