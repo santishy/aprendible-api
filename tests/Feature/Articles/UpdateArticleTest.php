@@ -13,31 +13,75 @@ class UpdateArticleTest extends TestCase
 
     public function test_can_update_article(): void
     {
-        //$this->withoutExceptionHandling();
-
-        // $response = $this->postJson(route('api.v1.articles.store'), [
-        //     "title" => "Nuevo articulo",
-        //     "slug" => "Nuevo-producto",
-        //     "content" => "nuevo contenido"
-        // ]);
-
-        // $response->dump();
 
         $article = Article::factory()->create();
-        $response = $this->patchJson(route('api.v1.articles.update', $article));
-        $response->assertOk()->dump();
+
+        $response = $this->patchJson(route('api.v1.articles.update', $article), [
+            "title" => "update title",
+            "slug" => "update-slug",
+            "content" => "update-content"
+        ]);
+
+        $response->assertOk();
+
         $response->assertHeader('Location', route('api.v1.articles.show', $article));
+
         $response->assertExactJson([
-            "id" => (string) $article->getRouteKey(),
-            "type" => "articles",
-            "attributes" => [
-                "title" => $article->title,
-                "slug" => $article->slug,
-                "content" => $article->content,
-            ],
-            "links" => [
-                "self" => route('api.v1.articles.show', $article)
+            "data" => [
+                "type" => "articles",
+                "id" => (string) $article->getRouteKey(),
+                "attributes" => [
+                    "title" => "update title",
+                    "slug" => "update-slug",
+                    "content" => "update-content"
+                ],
+                "links" => [
+                    "self" => route("api.v1.articles.show", $article)
+                ]
             ]
         ]);
+    }
+    public function test_title_is_required(): void
+    {
+
+        $response = $this->patchJson(route('api.v1.articles.update'), [
+            "slug" => "Nuevo-producto",
+            "content" => "nuevo contenido"
+        ]);
+
+        $response->assertJsonApiValidationErrors('title');
+    }
+    public function test_slug_is_required(): void
+    {
+        //$this->withoutExceptionHandling();
+        $response = $this->patchJson(route('api.v1.articles.update'), [
+            "title" => "Nuevo producto",
+            "content" => "nuevo contenido"
+        ]);
+
+        $response->assertJsonApiValidationErrors('slug');
+    }
+    public function test_content_is_required(): void
+    {
+        //$this->withoutExceptionHandling();
+        $response = $this->patchJson(route('api.v1.articles.update'), [
+
+            "title" => "Nuevo producto",
+            "slug" => "nuevo-producto"
+
+        ]);
+
+        $response->assertJsonApiValidationErrors('content');
+    }
+
+    public function test_title_must_be_at_least_4_characters()
+    {
+        $response = $this->patchJson(route('api.v1.articles.update'), [
+            "title" => "123",
+            "slug" => "nuevo-producto",
+            "content" => "contenido nuevo",
+        ]);
+
+        $response->assertJsonApiValidationErrors('title');
     }
 }

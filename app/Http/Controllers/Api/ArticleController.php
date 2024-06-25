@@ -33,4 +33,14 @@ class ArticleController extends Controller
         ]);
         return ArticleResource::make($article);
     }
+
+    public function update(Article $article, Request $request)
+    {
+        $article->update([
+            "title" => $request->input('data.attributes.title'),
+            "slug" => $request->input("data.attributes.slug"),
+            "content" => $request->input("data.attributes.content"),
+        ]);
+        return ArticleResource::make($article);
+    }
 }
