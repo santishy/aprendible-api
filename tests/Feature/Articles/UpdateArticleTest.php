@@ -18,7 +18,7 @@ class UpdateArticleTest extends TestCase
 
         $response = $this->patchJson(route('api.v1.articles.update', $article), [
             "title" => "update title",
-            "slug" => "update-slug",
+            "slug" => $article->slug,
             "content" => "update-content"
         ]);
 
@@ -32,7 +32,7 @@ class UpdateArticleTest extends TestCase
                 "id" => (string) $article->getRouteKey(),
                 "attributes" => [
                     "title" => "update title",
-                    "slug" => "update-slug",
+                    "slug" => $article->slug,
                     "content" => "update-content"
                 ],
                 "links" => [
@@ -43,10 +43,10 @@ class UpdateArticleTest extends TestCase
     }
     public function test_title_is_required(): void
     {
-
-        $response = $this->patchJson(route('api.v1.articles.update'), [
-            "slug" => "Nuevo-producto",
-            "content" => "nuevo contenido"
+        $article = Article::factory()->create();
+        $response = $this->patchJson(route('api.v1.articles.update', $article), [
+            "slug" => "-producto",
+            "content" => " contenido"
         ]);
 
         $response->assertJsonApiValidationErrors('title');
@@ -54,20 +54,37 @@ class UpdateArticleTest extends TestCase
     public function test_slug_is_required(): void
     {
         //$this->withoutExceptionHandling();
-        $response = $this->patchJson(route('api.v1.articles.update'), [
-            "title" => "Nuevo producto",
-            "content" => "nuevo contenido"
+        $article = Article::factory()->create();
+        $response = $this->patchJson(route('api.v1.articles.update', $article), [
+            "title" => " producto",
+            "content" => " contenido"
         ]);
 
         $response->assertJsonApiValidationErrors('slug');
     }
+
+    public function test_slug_must_be_unique(): void
+    {
+        //$this->withoutExceptionHandling();
+        $article1 = Article::factory()->create();
+        $article2 = Article::factory()->create();
+        $response = $this->postJson(route('api.v1.articles.store', $article1), [
+            "title" => "Nuevo producto",
+            "content" => "nuevo contenido",
+            "slug" => $article2->slug,
+        ]);
+
+        $response->assertJsonApiValidationErrors('slug');
+    }
+
     public function test_content_is_required(): void
     {
         //$this->withoutExceptionHandling();
-        $response = $this->patchJson(route('api.v1.articles.update'), [
+        $article = Article::factory()->create();
+        $response = $this->patchJson(route('api.v1.articles.update', $article), [
 
-            "title" => "Nuevo producto",
-            "slug" => "nuevo-producto"
+            "title" => " producto",
+            "slug" => "-producto"
 
         ]);
 
@@ -76,10 +93,12 @@ class UpdateArticleTest extends TestCase
 
     public function test_title_must_be_at_least_4_characters()
     {
-        $response = $this->patchJson(route('api.v1.articles.update'), [
+
+        $article = Article::factory()->create();
+        $response = $this->patchJson(route('api.v1.articles.update', $article), [
             "title" => "123",
-            "slug" => "nuevo-producto",
-            "content" => "contenido nuevo",
+            "slug" => "-producto",
+            "content" => "contenido ",
         ]);
 
         $response->assertJsonApiValidationErrors('title');
