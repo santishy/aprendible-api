@@ -109,7 +109,9 @@ class CreateArticleTest extends TestCase
             "title" => "new product",
             "slug" => "new_slug",
             "content" => "new content"
-        ])->assertJsonApiValidationErrors('slug');
+        ])
+            ->assertSee(__('validation.no_underscores', ["attribute" => "slug"]))
+            ->assertJsonApiValidationErrors('slug');
     }
     public function test_slug_must_not_start_with_dashes()
     {
@@ -117,7 +119,9 @@ class CreateArticleTest extends TestCase
             "title" => "new product",
             "slug" => "-starts-with-dashes",
             "content" => "new content"
-        ])->assertJsonApiValidationErrors('slug');
+        ])
+            ->assertSee(__('validation.no_starting_dashes', ["attribute" => "slug"]))
+            ->assertJsonApiValidationErrors('slug');
     }
 
     public function test_slug_must_not_end_with_dashes()
@@ -126,7 +130,9 @@ class CreateArticleTest extends TestCase
             "title" => "new product",
             "slug" => "end-with-dashes-",
             "content" => "new content"
-        ])->assertJsonApiValidationErrors('slug');
+        ])
+            ->assertSee(__('validation.no_ending_dashes', ["attribute" => "slug"]))
+            ->assertJsonApiValidationErrors('slug');
     }
     public function test_content_is_required(): void
     {

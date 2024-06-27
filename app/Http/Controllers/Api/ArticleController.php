@@ -8,12 +8,17 @@ use App\Http\Resources\ArticleCollection;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
 use Illuminate\Http\Request;
+use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        return ArticleCollection::make(Article::all());
+        $sortField = $request->input('sort');
+
+        $sortDirection = Str::of($sortField)->startsWith("-") ? 'desc' : "asc";
+        $sortField = ltrim($sortField, "-");
+        return ArticleCollection::make(Article::orderBy($sortField, $sortDirection)->get());
     }
     public function show(Article $article): ArticleResource
     {

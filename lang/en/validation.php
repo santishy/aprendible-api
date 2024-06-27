@@ -160,7 +160,9 @@ return [
     'url' => 'The :attribute field must be a valid URL.',
     'ulid' => 'The :attribute field must be a valid ULID.',
     'uuid' => 'The :attribute field must be a valid UUID.',
-
+    'no_underscores' => 'The :attribute field must not contain underscores',
+    'no_starting_dashes' => 'The :attribute field must not starting dashes',
+    'no_ending_dashes' => 'The :attribute field must not ending dashes',
     /*
     |--------------------------------------------------------------------------
     | Custom Validation Language Lines
@@ -177,6 +179,7 @@ return [
             'rule-name' => 'custom-message',
         ],
     ],
+
 
     /*
     |--------------------------------------------------------------------------

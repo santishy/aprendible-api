@@ -2,6 +2,7 @@
 
 namespace App\Http\Requests;
 
+use App\Rules\Slug;
 use Illuminate\Foundation\Http\FormRequest;
 use Illuminate\Validation\Rule;
 
@@ -28,8 +29,7 @@ class SaveArticleRequest extends FormRequest
                 "required",
                 Rule::unique('articles', 'slug')->ignore($this->route('article')),
                 "alpha_dash",
-                "not_regex:/^-/",
-                "not_regex:/-$/",
+                new Slug(),
             ],
             "data.attributes.content" => ["required"]
         ];

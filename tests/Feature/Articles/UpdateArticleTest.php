@@ -68,7 +68,7 @@ class UpdateArticleTest extends TestCase
         //$this->withoutExceptionHandling();
         $article1 = Article::factory()->create();
         $article2 = Article::factory()->create();
-        $response = $this->postJson(route('api.v1.articles.store', $article1), [
+        $response = $this->patchJson(route('api.v1.articles.update', $article1), [
             "title" => "Nuevo producto",
             "content" => "nuevo contenido",
             "slug" => $article2->slug,
@@ -76,7 +76,50 @@ class UpdateArticleTest extends TestCase
 
         $response->assertJsonApiValidationErrors('slug');
     }
+    public function test_slug_must_only_contain_letters_numbers_and_dashes()
+    {
+        $article = Article::factory()->create();
+        $this->patchJson(route('api.v1.articles.update', $article), [
+            "title" => "new product",
+            "slug" => "#423%",
+            "content" => "new content"
+        ])->assertJsonApiValidationErrors('slug');
+    }
 
+    public function test_slug_must_not_contain_underscores()
+    {
+        $article = Article::factory()->create();
+        $this->patchJson(route('api.v1.articles.update', $article), [
+            "title" => "new product",
+            "slug" => "new_slug",
+            "content" => "new content"
+        ])
+            ->assertSee(__('validation.no_underscores', ["attribute" => "slug"]))
+            ->assertJsonApiValidationErrors('slug');
+    }
+    public function test_slug_must_not_start_with_dashes()
+    {
+        $article = Article::factory()->create();
+        $this->patchJson(route('api.v1.articles.update', $article), [
+            "title" => "new product",
+            "slug" => "-starts-with-dashes",
+            "content" => "new content"
+        ])
+            ->assertSee(__('validation.no_starting_dashes', ["attribute" => "slug"]))
+            ->assertJsonApiValidationErrors('slug');
+    }
+
+    public function test_slug_must_not_end_with_dashes()
+    {
+        $article = Article::factory()->create();
+        $this->patchJson(route('api.v1.articles.update', $article), [
+            "title" => "new product",
+            "slug" => "end-with-dashes-",
+            "content" => "new content"
+        ])
+            ->assertSee(__('validation.no_ending_dashes', ["attribute" => "slug"]))
+            ->assertJsonApiValidationErrors('slug');
+    }
     public function test_content_is_required(): void
     {
         //$this->withoutExceptionHandling();
