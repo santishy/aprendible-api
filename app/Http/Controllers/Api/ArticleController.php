@@ -12,13 +12,19 @@ use Illuminate\Support\Str;
 
 class ArticleController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-        $sortField = $request->input('sort');
+        $articles = Article::allowedSorts(['title', 'content']);
 
-        $sortDirection = Str::of($sortField)->startsWith("-") ? 'desc' : "asc";
-        $sortField = ltrim($sortField, "-");
-        return ArticleCollection::make(Article::orderBy($sortField, $sortDirection)->get());
+        return ArticleCollection::make(
+            $articles->paginate(
+                $perPage = request('page.size', 15),
+                $columns = ['*'],
+                $pageName = 'page',
+                $page = request('page.number', null),
+                $total = null
+            )
+        );
     }
     public function show(Article $article): ArticleResource
     {

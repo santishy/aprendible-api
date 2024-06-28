@@ -89,4 +89,34 @@ class SortArticlesTest extends TestCase
                 "a content",
             ]);
     }
+    public function test_can_sort_articles_by_title_and_content(): void
+    {
+        Article::factory()->create([
+            "title" => "a title",
+            "content" => "a content"
+        ]);
+        Article::factory()->create([
+            "title" => "b title",
+            "content" => "b content"
+        ]);
+        Article::factory()->create([
+            "title" => "a title",
+            "content" => "c content"
+        ]);
+        $uri = route('api.v1.articles.index', ["sort" => "title,-content"]);
+        $this->getJson($uri)
+            ->assertSeeInOrder([
+                "c content",
+                "a content",
+                "b content",
+            ]);
+    }
+    public function test_cannot_sort_articles_by_unknown_fields(): void
+    {
+        //$this->withoutExceptionHandling();
+        Article::factory()->count(3)->create();
+        $uri = route('api.v1.articles.index', ["sort" => "unknown"]);
+        $this->getJson($uri)
+            ->assertStatus(400);
+    }
 }
