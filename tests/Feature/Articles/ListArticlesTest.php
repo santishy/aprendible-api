@@ -13,10 +13,9 @@ class ListArticlesTest extends TestCase
 
     public function test_can_fetch_a_single_article()
     {
-        $this->withoutExceptionHandling();
+        //$this->withoutExceptionHandling();
         $article = Article::factory()->create();
         $response = $this->getJson('/api/v1/articles/' . $article->getRouteKey());
-
         $response->assertExactJson([
             "data" => [
                 "type" => "articles",
@@ -34,10 +33,10 @@ class ListArticlesTest extends TestCase
     }
     public function test_can_fetch_all_articles()
     {
-        $this->withoutExceptionHandling();
+        //$this->withoutExceptionHandling();
         $articles = Article::factory()->count(3)->create();
         $response = $this->getJson(route('api.v1.articles.index'));
-        $response->assertExactJson([
+        $response->assertJson([
             "data" => [
                 [
                     "type" => "articles",

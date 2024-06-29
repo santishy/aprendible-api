@@ -14,6 +14,7 @@ trait MakesJsonApiRequests
     {
         parent::setUp();
 
+
         TestResponse::macro("assertJsonApiValidationErrors", function ($attribute) {
 
             $pointer = Str::of($attribute)->startsWith("data")

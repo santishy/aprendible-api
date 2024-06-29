@@ -17,13 +17,7 @@ class ArticleController extends Controller
         $articles = Article::allowedSorts(['title', 'content']);
 
         return ArticleCollection::make(
-            $articles->paginate(
-                $perPage = request('page.size', 15),
-                $columns = ['*'],
-                $pageName = 'page',
-                $page = request('page.number', null),
-                $total = null
-            )
+            $articles->jsonPaginate()
         );
     }
     public function show(Article $article): ArticleResource

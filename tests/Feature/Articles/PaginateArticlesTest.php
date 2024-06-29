@@ -41,8 +41,59 @@ class PaginateArticlesTest extends TestCase
             "links" => ["first", "last", "prev", "next"]
         ]);
 
-        $firstLink = $response->json('links.first');
+        $firstLink = urldecode($response->json('links.first'));
+        $lastLink = urldecode($response->json('links.last'));
+        $prevLink = urldecode($response->json('links.prev'));
+        $nextLink = urldecode($response->json('links.next'));
 
-        // $response->assertStr
+        $this->assertStringContainsString("page[number]=1", $firstLink);
+        $this->assertStringContainsString("page[size]=2", $firstLink);
+
+        $this->assertStringContainsString("page[number]=3", $lastLink);
+        $this->assertStringContainsString("page[size]=2", $lastLink);
+
+        $this->assertStringContainsString("page[number]=1", $prevLink);
+        $this->assertStringContainsString("page[size]=2", $prevLink);
+
+        $this->assertStringContainsString("page[number]=3", $nextLink);
+        $this->assertStringContainsString("page[size]=2", $nextLink);
+    }
+    public function test_can_paginate_and_sort_articles(): void
+    {
+        Article::factory()->create([
+            "title" => "c title"
+        ]);
+        Article::factory()->create([
+            "title" => "a title"
+        ]);
+        Article::factory()->create([
+            "title" => "b title"
+        ]);
+        $url = route('api.v1.articles.index', [
+            "sort" => "title",
+            "page" => [
+                "size" => 1,
+                "number" => 2
+            ]
+        ]);
+
+        $response = $this->getJson($url);
+
+        $response->assertSee(["b title"]);
+        $response->assertDontSee([
+            "a title",
+            "c title"
+        ]);
+
+
+        $firstLink = urldecode($response->json('links.first'));
+        $lastLink = urldecode($response->json('links.last'));
+        $prevLink = urldecode($response->json('links.prev'));
+        $nextLink = urldecode($response->json('links.next'));
+
+        $this->assertStringContainsString("sort=title", $firstLink);
+        $this->assertStringContainsString("sort=title", $lastLink);
+        $this->assertStringContainsString("sort=title", $prevLink);
+        $this->assertStringContainsString("sort=title", $nextLink);
     }
 }
