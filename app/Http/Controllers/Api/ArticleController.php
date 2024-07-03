@@ -14,8 +14,11 @@ class ArticleController extends Controller
 {
     public function index()
     {
-        $articles = Article::allowedSorts(['title', 'content']);
-
+        $articles = Article::query();
+    
+        $articles->where('title','LIKE',"%".request('filter.title')."%");
+       
+         $articles->allowedSorts(['title', 'content']);
         return ArticleCollection::make(
             $articles->jsonPaginate()
         );
