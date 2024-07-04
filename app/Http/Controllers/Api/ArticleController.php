@@ -15,10 +15,11 @@ class ArticleController extends Controller
     public function index()
     {
         $articles = Article::query();
-    
-        $articles->where('title','LIKE',"%".request('filter.title')."%");
-       
-         $articles->allowedSorts(['title', 'content']);
+
+        $articles->allowedFilters(["title", "content", "year", "month"]);
+
+        $articles->allowedSorts(['title', 'content']);
+
         return ArticleCollection::make(
             $articles->jsonPaginate()
         );

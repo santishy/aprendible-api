@@ -2,6 +2,7 @@
 
 namespace App\JsonApi;
 
+use Closure;
 use Illuminate\Support\Str;
 
 class JsonApiQueryBuilder
@@ -24,7 +25,29 @@ class JsonApiQueryBuilder
         };
     }
 
-    public function jsonPaginate(){
+    public function allowedFilters()
+    {
+        return function ($allowedFilters) {
+            /** @var Builder $this */
+            foreach (request('filter', []) as $filter => $value) {
+
+                abort_unless(in_array($filter, $allowedFilters), 400);
+
+                $this->hasNamedScope($filter)
+                    ? $this->{$filter}($value)
+                    :
+                    $this->where($filter, 'LIKE', "%" . $value . "%");
+            }
+            return $this;
+        };
+    }
+    public function sparseFieldset(): \Closure
+    {
+        return function () {
+        };
+    }
+    public function jsonPaginate()
+    {
         return  function () {
             /** @var Builder $this */
             return $this->paginate(
@@ -33,7 +56,8 @@ class JsonApiQueryBuilder
                 $pageName = 'page[number]',
                 $page = request('page.number', null),
                 $total = null
-            )->appends(request()->only('sort', 'page.size'));
+                //appends es para agregar un nuevo parametro a la paginacion, el page.size es un array por que page tiene como llaves size y number pero number viene por defecto asi que agrego la siguiente llave y only me lo trae como un array
+            )->appends(request()->only('sort', 'page.size', 'filter'));
         };
     }
 }
