@@ -15,15 +15,26 @@ class ArticleResource extends JsonResource
     public function toArray(Request $request): array
     {
         return [
-            "type" => "articles",
+            "type" => $this->getResourceType(),
             "id" => (string) $this->resource->getRouteKey(),
-            "attributes" => [
+            "attributes" => array_filter([
                 "title" => $this->resource->title,
                 "slug" => $this->resource->slug,
                 "content" => $this->resource->content,
-            ],
+            ], function ($value) {
+
+                if (request()->isNotFilled("fields")) {
+                    return true;
+                }
+                $fields = explode(",", request('fields.' . $this->getResourceType()));
+
+                if ($value === $this->getRouteKey()) {
+                    return in_array($this->getRouteKeyName(), $fields);
+                }
+                return $value;
+            }),
             "links" => [
-                "self" => route('api.v1.articles.show', $this->resource)
+                "self" => route('api.v1.' . $this->getResourceType() . '.show', $this->resource)
             ]
         ];
     }

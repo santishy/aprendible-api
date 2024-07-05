@@ -44,6 +44,19 @@ class JsonApiQueryBuilder
     public function sparseFieldset(): \Closure
     {
         return function () {
+            /** @var Builder $this */
+            if (request()->isNotFilled("fields")) {
+                return $this;
+            }
+
+
+            $columns = explode(",", request("fields.{$this->getResourceType()}"));
+            $keyRouteName = $this->model->getRouteKeyName();
+
+            if (!in_array($keyRouteName, $columns)) {
+                $columns[] = $keyRouteName;
+            }
+            return $this->addSelect($columns);
         };
     }
     public function jsonPaginate()
@@ -58,6 +71,17 @@ class JsonApiQueryBuilder
                 $total = null
                 //appends es para agregar un nuevo parametro a la paginacion, el page.size es un array por que page tiene como llaves size y number pero number viene por defecto asi que agrego la siguiente llave y only me lo trae como un array
             )->appends(request()->only('sort', 'page.size', 'filter'));
+        };
+    }
+
+    public function getResourceType(): Closure
+    {
+        return function () {
+            /** @var Builder $this */
+            if (property_exists($this->model, "resourceType")) {
+                return $this->model->resourceType;
+            }
+            return $this->model->getTable();
         };
     }
 }

@@ -20,12 +20,19 @@ class ArticleController extends Controller
 
         $articles->allowedSorts(['title', 'content']);
 
+        $articles->sparseFieldset();
+
         return ArticleCollection::make(
             $articles->jsonPaginate()
         );
     }
-    public function show(Article $article): ArticleResource
+    //si se quita el modelo Article del bind entonces queda el getRouteKey
+    public function show($article): ArticleResource
     {
+        $article = Article::where('slug', $article)
+            ->sparseFieldset()
+            ->firstOrFail();
+
         return ArticleResource::make($article);
     }
 
