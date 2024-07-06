@@ -22,7 +22,7 @@ class ArticleController extends Controller
 
         $articles->sparseFieldset();
 
-        return ArticleCollection::make(
+        return ArticleResource::collection(
             $articles->jsonPaginate()
         );
     }
