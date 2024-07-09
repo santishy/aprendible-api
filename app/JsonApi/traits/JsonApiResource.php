@@ -66,7 +66,6 @@ trait JsonApiResource
     {
         $collection = parent::collection($resource);
         $collection->with["links"] = ["self" => $resource->path()];
-
         return $collection;
     }
 }

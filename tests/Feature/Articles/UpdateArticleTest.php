@@ -24,21 +24,10 @@ class UpdateArticleTest extends TestCase
 
         $response->assertOk();
 
-        $response->assertHeader('Location', route('api.v1.articles.show', $article));
-
-        $response->assertExactJson([
-            "data" => [
-                "type" => "articles",
-                "id" => (string) $article->getRouteKey(),
-                "attributes" => [
-                    "title" => "update title",
-                    "slug" => $article->slug,
-                    "content" => "update-content"
-                ],
-                "links" => [
-                    "self" => route("api.v1.articles.show", $article)
-                ]
-            ]
+        $response->assertJsonApiResource($article, [
+            "title" => "update title",
+            "slug" => $article->slug,
+            "content" => "update-content"
         ]);
     }
     public function test_title_is_required(): void
