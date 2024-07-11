@@ -65,7 +65,7 @@ class JsonApiTestResponse
                 ]
             ]);
 
-            $this->assertHeader(
+            return $this->assertHeader(
                 'Location',
                 route('api.v1.' . $model->getResourceType() . '.show', $model)
             );
@@ -94,7 +94,7 @@ class JsonApiTestResponse
                     ]
                 ]);
             }
-
+            return $this;
 
             // $this->assertHeader(
             //     'Location',

@@ -33,7 +33,7 @@ trait JsonApiResource
     {
         $response->header(
             "Location",
-            route('api.v1.articles.show', $this->resource)
+            route('api.v1.' . $this->getResourceType() . '.show', $this->resource)
         );
     }
 
