@@ -2,6 +2,8 @@
 
 namespace Tests\Unit\JsonApi;
 
+use App\JsonApi\Document;
+use Mockery;
 use PHPUnit\Framework\TestCase;
 
 class DocumentTest extends TestCase
@@ -11,9 +13,12 @@ class DocumentTest extends TestCase
      */
     public function test_can_create_json_api_document(): void
     {
-        Document::type("articles")
+        $category = Mockery::mock("Category", function () {
+        });
+        $document = Document::type("articles")
             ->id("article-id")
             ->attributes(["title" => "article title"])
+            ->relationships(["category" => $category])
             ->toArray();
 
         $expected = [
@@ -23,8 +28,17 @@ class DocumentTest extends TestCase
                 "attributes" => [
                     "title" => "article title"
                 ],
-
+                "relationships" => [
+                    "category" => [
+                        "data" => [
+                            "id" => "category-id",
+                            "type" => "categories"
+                        ]
+                    ]
+                ]
             ]
         ];
+
+        $this->assertEquals($expected, $document);
     }
 }
