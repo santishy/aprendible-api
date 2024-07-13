@@ -2,6 +2,7 @@
 
 namespace Tests;
 
+use App\JsonApi\Document;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
 use PHPUnit\Framework\Assert;
@@ -10,7 +11,7 @@ use PHPUnit\Framework\ExpectationFailedException;
 trait MakesJsonApiRequests
 {
     protected bool $formatJsonApiDocument = true;
-    
+
     public function withoutJsonApiDocumentFormatting()
     {
         $this->formatJsonApiDocument = false;
@@ -27,15 +28,15 @@ trait MakesJsonApiRequests
     protected function getFormattedData($uri, $data)
     {
         $path = parse_url($uri)["path"];
+
         $type = (string) Str::of($path)->after('/api/v1/')->before("/");
-        $id = (string) Str::of($path)->after('/api/v1/')->before("/");
-        return [
-            "data" => array_filter([
-                "attributes" => $data,
-                "type" => $type,
-                "id" => $id
-            ])
-        ];
+        $id = (string) Str::of($path)->after($type)->replace("/", "");
+
+        return Document::type($type)
+            ->id($id)
+            ->attributes($data)
+            ->relationships($data["_relationships"] ?? []) //se manda vacio para que retorne solo el $this
+            ->toArray();
     }
     public function postJson($uri, array $data = [], array $headers = [], $options = 0)
     {

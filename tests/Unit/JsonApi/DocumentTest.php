@@ -13,7 +13,9 @@ class DocumentTest extends TestCase
      */
     public function test_can_create_json_api_document(): void
     {
-        $category = Mockery::mock("Category", function () {
+        $category = Mockery::mock("Category", function ($mock) {
+            $mock->shouldReceive("getResourceType")->andReturn('categories');
+            $mock->shouldReceive("getRouteKey")->andReturn("category-id");
         });
         $document = Document::type("articles")
             ->id("article-id")
