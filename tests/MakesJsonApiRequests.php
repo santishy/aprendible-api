@@ -28,7 +28,7 @@ trait MakesJsonApiRequests
     protected function getFormattedData($uri, $data)
     {
         $path = parse_url($uri)["path"];
-
+        $path = route("api.v1.articles.show", ["article" => 1, "relationships" => "alguna"]);
         $type = (string) Str::of($path)->after('/api/v1/')->before("/");
         $id = (string) Str::of($path)->after($type)->replace("/", "");
 

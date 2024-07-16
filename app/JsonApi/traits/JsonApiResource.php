@@ -21,6 +21,7 @@ trait JsonApiResource
         return Document::type($this->getResourceType())
             ->id($this->resource->getRouteKey())
             ->attributes($this->filterAttributes($this->toJsonApi()))
+            ->relationshipLinks(["category"])
             ->links([
                 "self" => route('api.v1.' . $this->getResourceType() . '.show', $this->resource)
             ])

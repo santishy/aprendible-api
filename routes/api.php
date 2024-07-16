@@ -13,3 +13,9 @@ Route::apiResource('articles', ArticleController::class)
 Route::apiResource('categories', CategoryController::class)
     ->names('api.v1.categories')
     ->only('show', 'index');
+
+Route::get("articles/{article}/relationships/category", fn () => "ok")
+    ->name('api.v1.articles.relationships.category');
+
+Route::get("articles/{article}/category", fn () => "ok")
+    ->name('api.v1.articles.category');

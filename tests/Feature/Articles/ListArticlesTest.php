@@ -22,13 +22,25 @@ class ListArticlesTest extends TestCase
             "title" => $article->title,
             "slug" => $article->slug,
             "content" => $article->content
-        ]);
+        ])
+            ->assertJson([
+                "data" => [
+                    "relationships" => [
+                        "category" => [
+                            "links" => [
+                                "self" => route("api.v1.articles.relationships.category", $article->getRouteKey()),
+                                "related" => route("api.v1.articles.category", $article->getRouteKey())
+                            ]
+                        ]
+                    ]
+                ]
+            ]);
     }
     public function test_can_fetch_all_articles()
     {
         // $this->withoutExceptionHandling();
         $articles = Article::factory()->count(3)->create();
-        $response = $this->getJson(route('api.v1.articles.index'))->dump();
+        $response = $this->getJson(route('api.v1.articles.index'));
 
         $response->assertJsonApiResourceCollection($articles, [
             "title",
