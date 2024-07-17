@@ -19,4 +19,8 @@ class ArticleResource extends JsonResource
             "content" => $this->resource->content,
         ];
     }
+    public function getRelationshipsLinks(): array
+    {
+        return ["category"];
+    }
 }

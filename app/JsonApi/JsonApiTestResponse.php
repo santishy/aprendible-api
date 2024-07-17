@@ -2,6 +2,7 @@
 
 namespace App\JsonApi;
 
+use Closure;
 use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
 use Illuminate\Support\Str;
@@ -51,6 +52,28 @@ class JsonApiTestResponse
 
             $this->assertHeader("content-type", "application/vnd.api+json")
                 ->assertStatus(422);
+        };
+    }
+
+    public function assertJsonApiRelationshipLinks(): Closure
+    {
+        return function ($model, $relationships) {
+            /** @var TestResponse $this */
+            foreach ($relationships as $relation) {
+                $this->assertJson([
+                    "data" => [
+                        "relationships" => [
+                            "category" => [
+                                "links" => [
+                                    "self" => route("api.v1.{$model->getResourceType()}.relationships.category", $model->getRouteKey()),
+                                    "related" => route("api.v1.{$model->getResourceType()}.category", $model->getRouteKey())
+                                ]
+                            ]
+                        ]
+                    ]
+                ]);
+            }
+            return $this;
         };
     }
 

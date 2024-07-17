@@ -20,7 +20,7 @@ class DocumentTest extends TestCase
         $document = Document::type("articles")
             ->id("article-id")
             ->attributes(["title" => "article title"])
-            ->relationships(["category" => $category])
+            ->relationshipsData(["category" => $category])
             ->toArray();
 
         $expected = [

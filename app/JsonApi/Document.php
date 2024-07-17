@@ -35,7 +35,7 @@ class Document extends Collection
         $this->items["data"]["links"] = $links;
         return $this;
     }
-    public function relationships(array $relationships)
+    public function relationshipsData(array $relationships)
     {
         foreach ($relationships as $key => $relation) {
             $this->items["data"]["relationships"][$key]["data"] = [

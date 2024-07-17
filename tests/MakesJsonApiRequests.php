@@ -35,7 +35,7 @@ trait MakesJsonApiRequests
         return Document::type($type)
             ->id($id)
             ->attributes($data)
-            ->relationships($data["_relationships"] ?? []) //se manda vacio para que retorne solo el $this
+            ->relationshipsData($data["_relationships"] ?? []) //se manda vacio para que retorne solo el $this
             ->toArray();
     }
     public function postJson($uri, array $data = [], array $headers = [], $options = 0)
