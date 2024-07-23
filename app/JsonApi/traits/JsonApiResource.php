@@ -2,6 +2,7 @@
 
 namespace App\JsonApi\traits;
 
+use App\Http\Resources\CategoryResource;
 use App\JsonApi\Document;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,7 +19,10 @@ trait JsonApiResource
      */
     public function toArray(Request $request)
     {
-        return Document::type($this->getResourceType())
+        if (request()->filled('include')) {
+            $this->with['included'] = $this->getIncludes();
+        }
+        return Document::type($this->resource->getResourceType())
             ->id($this->resource->getRouteKey())
             ->attributes($this->filterAttributes($this->toJsonApi()))
             ->relationshipLinks($this->getRelationshipsLinks())
@@ -60,15 +64,26 @@ trait JsonApiResource
         );
     }
 
-    /**este metodo es llamado cuando ArticleResource::collection y se usa el path para obtener el resourceType */
-    public static function collection($resource)
-    {
-        $collection = parent::collection($resource);
-        $collection->with["links"] = ["self" => $resource->path()];
-        return $collection;
-    }
     public function getRelationshipsLinks(): array
     {
         return [];
+    }
+    public function getIncludes(): array
+    {
+        return [];
+    }
+    /**este metodo es llamado cuando ArticleResource::collection y se usa el path para obtener el resourceType */
+    public static function collection($resources)
+    {
+        $collection = parent::collection($resources);
+
+        foreach ($resources as $resource) {
+            foreach ($resource->getIncludes() as $include) {
+                dd($resource->getIncludes());
+                $collection->with["included"][] = $include;
+            }
+        }
+        $collection->with["links"] = ["self" => $resources->path()];
+        return $collection;
     }
 }

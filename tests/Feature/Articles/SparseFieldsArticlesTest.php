@@ -13,15 +13,16 @@ class SparseFieldsArticlesTest extends TestCase
 
     public function test_specific_fields_can_be_requested_index(): void
     {
+        // $this->withoutExceptionHandling();
         $article = Article::factory()->create();
-
+        // Article::factory()->create();
         // json:api spec. articles?fields[articles]=title,slug
 
         $url = route('api.v1.articles.index', [
             "fields[articles]" => "title,slug"
         ]);
 
-        $this->getJson($url)
+        $this->getJson($url)->dump()
             ->assertJsonFragment([
                 "title" => $article->title,
                 "slug" => $article->slug,
