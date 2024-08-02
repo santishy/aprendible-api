@@ -22,6 +22,7 @@ trait JsonApiResource
         if (request()->filled('include')) {
             $this->with['included'] = $this->getIncludes();
         }
+
         return Document::type($this->resource->getResourceType())
             ->id($this->resource->getRouteKey())
             ->attributes($this->filterAttributes($this->toJsonApi()))
@@ -75,11 +76,11 @@ trait JsonApiResource
     /**este metodo es llamado cuando ArticleResource::collection y se usa el path para obtener el resourceType */
     public static function collection($resources)
     {
+
         $collection = parent::collection($resources);
 
         foreach ($resources as $resource) {
             foreach ($resource->getIncludes() as $include) {
-                dd($resource->getIncludes());
                 $collection->with["included"][] = $include;
             }
         }
