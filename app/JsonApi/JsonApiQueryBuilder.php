@@ -56,6 +56,7 @@ class JsonApiQueryBuilder
             if (!in_array($keyRouteName, $columns)) {
                 $columns[] = $keyRouteName;
             }
+            // dd($columns);
             return $this->addSelect($columns);
         };
     }

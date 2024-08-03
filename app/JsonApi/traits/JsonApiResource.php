@@ -84,6 +84,7 @@ trait JsonApiResource
                 $collection->with["included"][] = $include;
             }
         }
+
         $collection->with["links"] = ["self" => $resources->path()];
         return $collection;
     }
