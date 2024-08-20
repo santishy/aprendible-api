@@ -22,17 +22,17 @@ class SparseFieldsArticlesTest extends TestCase
             "fields[articles]" => "title,slug"
         ]);
 
-        $this->getJson($url)->dump();
-        // ->assertJsonFragment([
-        //     "title" => $article->title,
-        //     "slug" => $article->slug,
-        // ])
-        // ->assertJsonMissing([
-        //     "content" => $article->content
-        // ])
-        // ->assertJsonMissing([
-        //     "content" => null
-        // ]);
+        $this->getJson($url)
+            ->assertJsonFragment([
+                "title" => $article->title,
+                "slug" => $article->slug,
+            ])
+            ->assertJsonMissing([
+                "content" => $article->content
+            ])
+            ->assertJsonMissing([
+                "content" => null
+            ]);
     }
     public function test_route_key_must_be_added_automatically_index(): void
     {

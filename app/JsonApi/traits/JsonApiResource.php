@@ -78,13 +78,13 @@ trait JsonApiResource
     {
 
         $collection = parent::collection($resources);
-
-        foreach ($resources as $resource) {
-            foreach ($resource->getIncludes() as $include) {
-                $collection->with["included"][] = $include;
+        if (request()->filled('include')) {
+            foreach ($resources as $resource) {
+                foreach ($resource->getIncludes() as $include) {
+                    $collection->with["included"][] = $include;
+                }
             }
         }
-
         $collection->with["links"] = ["self" => $resources->path()];
         return $collection;
     }

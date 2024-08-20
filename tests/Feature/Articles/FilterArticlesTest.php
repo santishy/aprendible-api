@@ -14,23 +14,25 @@ class FilterArticlesTest extends TestCase
     public function test_can_filter_articles_by_title(): void
     {
 
-        $article = Article::factory()->create([
-            "title" => "Aprende laravel desde cero."
-        ]);
-        $article2 = Article::factory()->create([
-            "title" => "Otro articulo"
-        ]);
-        // articles?filter[title]=value
-        $url  = route('api.v1.articles.index', [
-            "filter" => [
-                "title" => "laravel"
-            ]
+        Article::factory()->create([
+            'title' => 'Aprende Laravel Desde Cero',
         ]);
 
-        $response = $this->getJson($url);
-        $response->assertJsonCount(1, 'data');
-        $response->assertSee("Aprende laravel desde cero.");
-        $response->assertDontSee("Otro articulo");
+        Article::factory()->create([
+            'title' => 'Other Article',
+        ]);
+
+        // articles?filter[title]=Laravel
+        $url = route('api.v1.articles.index', [
+            'filter' => [
+                'title' => 'Laravel',
+            ],
+        ]);
+
+        $this->getJson($url)
+            ->assertJsonCount(1, 'data')
+            ->assertSee('Aprende Laravel Desde Cero')
+            ->assertDontSee('Other Article');
     }
 
     public function test_can_filter_articles_by_content(): void

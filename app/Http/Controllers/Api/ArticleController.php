@@ -16,9 +16,9 @@ class ArticleController extends Controller
     {
         $articles = Article::query();
 
-        //$articles->allowedFilters(["title", "content", "year", "month"]);
+        $articles->allowedFilters(["title", "content", "year", "month"]);
 
-        //$articles->allowedSorts(['title', 'content']);
+        $articles->allowedSorts(['title', 'content']);
 
         $articles->sparseFieldset();
 
