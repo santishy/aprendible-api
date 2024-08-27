@@ -6,6 +6,7 @@ use App\Http\Resources\CategoryResource;
 use App\JsonApi\Document;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Resources\MissingValue;
 
 trait JsonApiResource
 {
@@ -22,13 +23,13 @@ trait JsonApiResource
         if (request()->filled('include')) {
             $this->with['included'] = $this->getIncludes();
         }
-
+        
         return Document::type($this->resource->getResourceType())
             ->id($this->resource->getRouteKey())
             ->attributes($this->filterAttributes($this->toJsonApi()))
             ->relationshipLinks($this->getRelationshipsLinks())
             ->links([
-                "self" => route('api.v1.' . $this->getResourceType() . '.show', $this->resource)
+                "self" => route('api.v1.' . $this->resource->getResourceType() . '.show', $this->resource)
             ])
             ->get('data');
     }
@@ -81,6 +82,10 @@ trait JsonApiResource
         if (request()->filled('include')) {
             foreach ($resources as $resource) {
                 foreach ($resource->getIncludes() as $include) {
+                    //dd($include);
+                    /*if($include instanceof MissingValue){
+                        continue;
+                    }*/
                     $collection->with["included"][] = $include;
                 }
             }
