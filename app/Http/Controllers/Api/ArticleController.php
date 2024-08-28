@@ -16,6 +16,8 @@ class ArticleController extends Controller
     {
         $articles = Article::query();
 
+        $articles->allowedIncludes(['category']);
+
         $articles->allowedFilters(["title", "content", "year", "month"]);
 
         $articles->allowedSorts(['title', 'content']);
@@ -30,6 +32,7 @@ class ArticleController extends Controller
     public function show($article): ArticleResource
     {
         $article = Article::where('slug', $article)
+            ->allowedIncludes(['category'])
             ->sparseFieldset()
             ->firstOrFail();
 

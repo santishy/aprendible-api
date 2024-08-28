@@ -5,6 +5,7 @@ namespace Tests\Feature\Articles;
 use App\Models\Article;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\DB;
 use Tests\TestCase;
 
 class ListArticlesTest extends TestCase
@@ -26,10 +27,13 @@ class ListArticlesTest extends TestCase
     }
     public function test_can_fetch_all_articles()
     {
-        // $this->withoutExceptionHandling();
+        //$this->withoutExceptionHandling();
         $articles = Article::factory()->count(3)->create();
-        $response = $this->getJson(route('api.v1.articles.index'));
-
+        $url = route('api.v1.articles.index');
+        DB::listen(function ($query) {
+            dump($query->sql);
+        });
+        $response = $this->getJson($url);
         $response->assertJsonApiResourceCollection($articles, [
             "title",
             "slug",

@@ -21,9 +21,14 @@ trait JsonApiResource
     public function toArray(Request $request)
     {
         if (request()->filled('include')) {
-            $this->with['included'] = $this->getIncludes();
+            foreach ($this->getIncludes() as $include) {
+                if ($include->resource instanceof MissingValue) {
+                    continue;
+                }
+                $this->with['included'][] = $include;
+            }
         }
-        
+
         return Document::type($this->resource->getResourceType())
             ->id($this->resource->getRouteKey())
             ->attributes($this->filterAttributes($this->toJsonApi()))
@@ -82,10 +87,9 @@ trait JsonApiResource
         if (request()->filled('include')) {
             foreach ($resources as $resource) {
                 foreach ($resource->getIncludes() as $include) {
-                    //dd($include);
-                    /*if($include instanceof MissingValue){
+                    if ($include->resource instanceof MissingValue) {
                         continue;
-                    }*/
+                    }
                     $collection->with["included"][] = $include;
                 }
             }
