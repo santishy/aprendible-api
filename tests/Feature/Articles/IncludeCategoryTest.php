@@ -42,9 +42,9 @@ class IncludeCategoryTest extends TestCase
             'include' => 'category'
         ]);
 
-        DB::listen(function ($query) {
+        /*DB::listen(function ($query) {
             dump($query->sql);
-        });
+        });*/
 
         $this->getJson($url)
             ->assertJson([

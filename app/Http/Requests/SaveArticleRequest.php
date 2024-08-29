@@ -37,6 +37,7 @@ class SaveArticleRequest extends FormRequest
                 Rule::requiredIf(!$this->route('article')),
                 Rule::exists("categories", "slug")
             ],
+            "data.relationships.author.data.id" => []
         ];
     }
     //sobreescribe este metodo ya que al parecer esta en la clase implentada
@@ -46,10 +47,23 @@ class SaveArticleRequest extends FormRequest
         $attributes = $data["attributes"];
         if (isset($data["relationships"])) {
             $relationships = $data["relationships"];
-            $categorySlug = $relationships["category"]["data"]["id"];
-            $category = Category::whereSlug($categorySlug)->first();
-            $attributes["category_id"] = $category->id;
+       
+            foreach($relationships as $key => $relationship){
+                $attributes = array_merge($attributes, $this->{$key}($relationship));
+            }
+           
         }
         return $attributes;
+    }
+
+    public function category($relationship):array{
+        $categorySlug = $relationship["data"]["id"];
+        $category = Category::whereSlug($categorySlug)->first();
+        return ["category_id" => $category->id];
+    }
+
+    public function author($relationship):array {
+        $author = $relationship["data"]["id"];
+        return ["user_id" => $author];
     }
 }

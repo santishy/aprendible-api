@@ -23,7 +23,7 @@ class ListArticlesTest extends TestCase
             "title" => $article->title,
             "slug" => $article->slug,
             "content" => $article->content
-        ])->assertJsonApiRelationshipLinks($article, ['category']);
+        ])->assertJsonApiRelationshipLinks($article, ['category','author']);
     }
     public function test_can_fetch_all_articles()
     {

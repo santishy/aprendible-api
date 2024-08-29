@@ -4,6 +4,7 @@ namespace Tests\Feature\Articles;
 
 use App\Models\Article;
 use App\Models\Category;
+use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -14,7 +15,9 @@ class CreateArticleTest extends TestCase
 
     public function test_can_create_articles(): void
     {
+        $this->withoutExceptionHandling();
         $category = Category::factory()->create();
+        $author = User::factory()->create();
         $response = $this->postJson(route('api.v1.articles.store'), [
             //"data" => [
             //  "type" => "articles",
@@ -22,7 +25,10 @@ class CreateArticleTest extends TestCase
             "title" => "Nuevo articulo",
             "slug" => "Nuevo-producto",
             "content" => "nuevo contenido",
-            "_relationships" => ["category" => $category]
+            "_relationships" => [
+                "category" => $category,
+                "author" => $author
+            ]
             //],
 
             // ]
@@ -31,19 +37,16 @@ class CreateArticleTest extends TestCase
         $response->assertCreated();
         $article = Article::first();
         $response->assertHeader('Location', route('api.v1.articles.show', $article));
-        $response->assertJson([
-            "data" => [
-                "type" => "articles",
-                "id" => (string) $article->getRouteKey(),
-                "attributes" => [
-                    "title" => "Nuevo articulo",
-                    "slug" => "Nuevo-producto",
-                    "content" => "nuevo contenido"
-                ],
-                "links" => [
-                    "self" => route("api.v1.articles.show", $article)
-                ]
-            ]
+        $response->assertJsonApiResource($article,[
+            "title" => "Nuevo articulo",
+            "slug" => "Nuevo-producto",
+            "content" => "nuevo contenido"
+        ]);
+        
+        $this->assertDatabaseHas('articles',[
+            "title" => "Nuevo articulo",
+            'category_id' => $category->id,
+            'user_id' => $author->id
         ]);
     }
     public function test_title_is_required(): void
