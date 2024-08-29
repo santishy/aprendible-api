@@ -3,6 +3,7 @@
 namespace Tests\Feature\Articles;
 
 use App\Models\Article;
+use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
@@ -55,6 +56,26 @@ class FilterArticlesTest extends TestCase
         $response->assertJsonCount(1, 'data');
         $response->assertSee("Aprende laravel desde cero.");
         $response->assertDontSee("Otro articulo");
+    }
+    public function test_can_filter_articles_by_category(): void
+    {
+        $this->withoutExceptionHandling();
+        Category::factory()->hasArticles(2)->create();
+        $cat1 = Category::factory()->hasArticles(3)->create(['slug' => 'cat-1']);
+        $cat2 = Category::factory()->hasArticles()->create(['slug' => 'cat-2']);
+
+        //articles?filter[categories]=cat-1
+        $url = route('api.v1.articles.index', [
+            "filter" => [
+                "categories" => "cat-1,cat-2"
+            ]
+        ]);
+        $this->getJson($url)
+            ->assertJsonCount(4, "data")
+            ->assertSee($cat1->articles[0]->title)
+            ->assertSee($cat1->articles[1]->title)
+            ->assertSee($cat1->articles[2]->title)
+            ->assertSee($cat2->articles[0]->title);
     }
     public function test_can_filter_articles_by_year(): void
     {

@@ -18,7 +18,7 @@ class ArticleController extends Controller
 
         $articles->allowedIncludes(['category']);
 
-        $articles->allowedFilters(["title", "content", "year", "month"]);
+        $articles->allowedFilters(["title", "content", "year", "month", "categories"]);
 
         $articles->allowedSorts(['title', 'content']);
 

@@ -50,4 +50,15 @@ class Article extends Model
     {
         $query->whereMonth("created_at", $value);
     }
+    public function scopeCategories(Builder $query, $categories)
+    {
+        $query->whereHas('category', function (Builder $query) use ($categories) {
+            $categoriesSlug = explode(",", $categories);
+            //estoy no funcionaria por que el where me agregarian un and
+            /*foreach ($categories as $category) {
+                $query->whereSlug($category);
+            }*/
+            $query->whereIn("slug", $categoriesSlug);
+        });
+    }
 }
