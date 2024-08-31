@@ -3,19 +3,20 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Http\Resources\CategoryResource;
+use App\Http\Resources\AuthorResource;
 use App\Models\Article;
 use Illuminate\Http\Request;
 
-class ArticleCategoryController extends Controller
+class ArticleAuthorController extends Controller
 {
+
     public function index(Article $article)
     {
-
-        return CategoryResource::identifier($article->category);
+        return AuthorResource::identifier($article->author);
     }
+
     public function show(Article $article)
     {
-        return CategoryResource::make($article->category);
+        return AuthorResource::make($article->author);
     }
 }

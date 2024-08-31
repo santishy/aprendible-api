@@ -13,6 +13,12 @@ trait JsonApiResource
 
     abstract public function toJsonApi(): array;
 
+
+    public static function identifier($resource)
+    {
+        return Document::type($resource->getResourceType())
+            ->id($resource->getRouteKey())->toArray();
+    }
     /**
      * Transform the resource into an array.
      *
