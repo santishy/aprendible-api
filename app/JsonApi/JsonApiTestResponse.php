@@ -31,8 +31,7 @@ class JsonApiTestResponse
                 ])->assertStatus(422);
             } catch (ExpectationFailedException $e) {
 
-                Assert::fail("failed to find a JSON:API validation error for key: {$attribute}"
-                    . PHP_EOL . PHP_EOL . $e->getMessage());
+                Assert::fail("failed to find a JSON:API validation error for key: {$attribute}" . PHP_EOL . PHP_EOL . $e->getMessage());
             }
 
             try {
@@ -40,7 +39,9 @@ class JsonApiTestResponse
                 $this->assertJsonStructure([
                     "errors" => [
                         [
-                            "title", "detail", "source" => ["pointer"]
+                            "title",
+                            "detail",
+                            "source" => ["pointer"]
                         ]
                     ]
                 ]);

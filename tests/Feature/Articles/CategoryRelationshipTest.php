@@ -45,4 +45,6 @@ class CategoryRelationshipTest extends TestCase
                 ]
             ]);
     }
+
+    public function test_can_update_associated_category() {}
 }
