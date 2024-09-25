@@ -46,5 +46,17 @@ class CategoryRelationshipTest extends TestCase
             ]);
     }
 
-    public function test_can_update_associated_category() {}
+    public function test_can_update_associated_category()
+    {
+        $article  = Article::factory()->create();
+        $url = route('api.v1.articles.relationships.category');
+        // $response = $this->patchJson($url),[
+        //     'data' => [
+        //         "type" => "categories",
+        //         "id" => $article
+        //     ]
+        // ];
+
+
+    }
 }
