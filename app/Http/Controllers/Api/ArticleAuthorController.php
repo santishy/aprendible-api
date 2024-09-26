@@ -19,4 +19,11 @@ class ArticleAuthorController extends Controller
     {
         return AuthorResource::make($article->author);
     }
+    public function update(Article $article, Request $request)
+    {
+        $request->validate()
+        $userId = $request->input('data.id');
+        $article->update(['user_id' => $userId]);
+        return AuthorResource::identifier($article->author);
+    }
 }

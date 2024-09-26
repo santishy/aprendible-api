@@ -20,10 +20,16 @@ Route::apiResource('categories', CategoryController::class)
 Route::get("articles/{article}/relationships/category", [ArticleCategoryController::class, 'index'])
     ->name('api.v1.articles.relationships.category');
 
+Route::patch("articles/{article}/relationships/category", [ArticleCategoryController::class, 'update'])
+    ->name('api.v1.articles.relationships.category');
+
 Route::get("articles/{article}/category", [ArticleCategoryController::class, 'show'])
     ->name('api.v1.articles.category');
 
 Route::get("articles/{article}/relationships/author", [ArticleAuthorController::class, 'index'])
+    ->name('api.v1.articles.relationships.author');
+
+Route::patch("articles/{article}/relationships/author", [ArticleAuthorController::class, 'update'])
     ->name('api.v1.articles.relationships.author');
 
 Route::get("articles/{article}/author", [ArticleAuthorController::class, 'show'])
