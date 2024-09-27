@@ -131,4 +131,31 @@ class JsonApiTestResponse
             // );
         };
     }
+
+    public function assertJsonApiError(): Closure
+    {
+        //argumentos con nombre ... x eso es q pueden ser opcionales sin importar el orden
+        return function ($title = null, $detail = null, $status = null) {
+            /** @var TestResponse $this */
+            // se le pone ['title','detail'] para que cumpla la regla de jsonApi donde dice que la llave errors debe serun array [ de objetos ]
+            $this->assertJsonStructure([
+                "errors" => [
+                    "*" => ['title', 'detail']
+                ]
+            ]);
+            $title && $this->assertJsonFragment([
+                "title" => $title,
+            ]);
+            $detail && $this->assertJsonFragment([
+                "detail" => $detail,
+            ]);
+            $status && $this->assertJsonFragment([
+                "status" => $status,
+            ]);
+
+            $this->assertStatus((int) $status);
+
+            return $this;
+        };
+    }
 }

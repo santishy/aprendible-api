@@ -72,4 +72,23 @@ class CategoryRelationshipTest extends TestCase
             "category_id" => $category->id,
         ]);
     }
+    public function test_category_must_exist_database()
+    {
+        $article = Article::factory()->create();
+        $url = route('api.v1.articles.relationships.category', $article);
+
+        $this->withoutJsonApiDocumentFormatting();
+
+        $this->patchJson($url, [
+            "data" => [
+                "type" => "categories",
+                "id" => "non-existing"
+            ]
+        ])->assertJsonApiValidationErrors('data.id');
+
+        $this->assertDatabaseHas('articles', [
+            "title" => $article->title,
+            "category_id" => $article->category_id,
+        ]);
+    }
 }
