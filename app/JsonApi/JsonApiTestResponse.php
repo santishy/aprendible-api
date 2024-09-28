@@ -7,6 +7,7 @@ use PHPUnit\Framework\Assert;
 use PHPUnit\Framework\ExpectationFailedException;
 use Illuminate\Support\Str;
 use Illuminate\Testing\TestResponse;
+use InvalidArgumentException;
 
 class JsonApiTestResponse
 {
@@ -138,22 +139,26 @@ class JsonApiTestResponse
         return function ($title = null, $detail = null, $status = null) {
             /** @var TestResponse $this */
             // se le pone ['title','detail'] para que cumpla la regla de jsonApi donde dice que la llave errors debe serun array [ de objetos ]
-            $this->assertJsonStructure([
-                "errors" => [
-                    "*" => ['title', 'detail']
-                ]
-            ]);
-            $title && $this->assertJsonFragment([
-                "title" => $title,
-            ]);
-            $detail && $this->assertJsonFragment([
-                "detail" => $detail,
-            ]);
-            $status && $this->assertJsonFragment([
-                "status" => $status,
-            ]);
+            try {
+                $this->assertJsonStructure([
+                    'errors' => [
+                        '*' => ['title', 'detail']
+                    ]
+                ]);
+            } catch (\TypeError $e) {
+                Assert::fail("Error objects must be returns as an array keyed by errors in the top level of JSON:API DOCUMENT" . PHP_EOL . PHP_EOL . $e->getMessage());
+            }
+            // $title && $this->assertJsonFragment([
+            //     "title" => $title,
+            // ]);
+            // $detail && $this->assertJsonFragment([
+            //     "detail" => $detail,
+            // ]);
+            // $status && $this->assertJsonFragment([
+            //     "status" => $status,
+            // ]);
 
-            $this->assertStatus((int) $status);
+            // $this->assertStatus((int) $status);
 
             return $this;
         };

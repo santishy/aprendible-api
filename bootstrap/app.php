@@ -34,16 +34,17 @@ return Application::configure(basePath: dirname(__DIR__))
             return null;
         });
 
-        $exceptions->renderable(function (NotFoundHttpException $e, $request) {
+        $exceptions->renderable(function (NotFoundHttpException $e, Request $request) {
             $type = $request->input('data.type');
             $id = $request->input('data.id');
             //la espeficificacion jsonApi dice que la llave errors debe ser un array de objetos,osea una matriz en este caso
+
             return response()->json([
-                "errors" => [[
+                "errors" => [
                     "title" => "Not found",
                     "detail" => "No records found with the id '{$id}' in the '{$type}' resource",
                     "status" => "404"
-                ]]
+                ]
             ], 404);
         });
     })->create();
