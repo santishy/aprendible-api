@@ -113,10 +113,13 @@ class SortArticlesTest extends TestCase
     }
     public function test_cannot_sort_articles_by_unknown_fields(): void
     {
-        //$this->withoutExceptionHandling();
         Article::factory()->count(3)->create();
         $uri = route('api.v1.articles.index', ["sort" => "unknown"]);
-        $this->getJson($uri)
-            ->assertStatus(400);
+        $this->getJson($uri)->dump()
+            ->assertJsonApiError(
+                detail: "The sort field 'unknown' is not allowed in the 'articles' resource",
+                status: "400",
+                title: "Bad request"
+            );;
     }
 }

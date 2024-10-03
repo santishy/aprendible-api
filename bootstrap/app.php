@@ -8,6 +8,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
@@ -34,17 +35,10 @@ return Application::configure(basePath: dirname(__DIR__))
             return null;
         });
 
-        $exceptions->renderable(function (NotFoundHttpException $e, Request $request) {
-            $type = $request->input('data.type');
-            $id = $request->input('data.id');
-            //la espeficificacion jsonApi dice que la llave errors debe ser un array de objetos,osea una matriz en este caso
-
-            return response()->json([
-                "errors" => [
-                    "title" => "Not found",
-                    "detail" => "No records found with the id '{$id}' in the '{$type}' resource",
-                    "status" => "404"
-                ]
-            ], 404);
+        $exceptions->renderable(function (NotFoundHttpException $e) {
+            throw new App\Exceptions\JsonApi\NotFoundHttpException;
         });
+
+        $exceptions->renderable(fn(BadRequestHttpException $e) =>
+        throw new App\Exceptions\JsonApi\BadRequestHttpException);
     })->create();
