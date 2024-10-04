@@ -8,6 +8,7 @@ use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
 use Illuminate\Validation\ValidationException;
+use PHPUnit\Util\InvalidJsonException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 
@@ -28,11 +29,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (ValidationException $exception, Request $request) {
 
-            if ($request->expectsJson()) {
+            if ($request->expectsJson() && !$request->routeIs('api.v1.login')) {
                 return new JsonApiValidationErrorResponse($exception);
             }
-
-            return null;
         });
 
         $exceptions->renderable(function (NotFoundHttpException $e) {
