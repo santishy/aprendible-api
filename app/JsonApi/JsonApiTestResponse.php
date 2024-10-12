@@ -145,20 +145,20 @@ class JsonApiTestResponse
                         '*' => ['title', 'detail']
                     ]
                 ]);
-            } catch (\TypeError $e) {
+            } catch (ExpectationFailedException $e) {
                 Assert::fail("Error objects must be returns as an array keyed by errors in the top level of JSON:API DOCUMENT" . PHP_EOL . PHP_EOL . $e->getMessage());
             }
-            // $title && $this->assertJsonFragment([
-            //     "title" => $title,
-            // ]);
-            // $detail && $this->assertJsonFragment([
-            //     "detail" => $detail,
-            // ]);
-            // $status && $this->assertJsonFragment([
-            //     "status" => $status,
-            // ]);
+            $title && $this->assertJsonFragment([
+                "title" => $title,
+            ]);
+            $detail && $this->assertJsonFragment([
+                "detail" => $detail,
+            ]);
+            $status && $this->assertJsonFragment([
+                "status" => $status,
+            ]);
 
-            // $this->assertStatus((int) $status);
+            $this->assertStatus((int) $status);
 
             return $this;
         };

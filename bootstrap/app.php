@@ -3,14 +3,18 @@
 use App\Http\Middleware\ValidateJsonApiDocument;
 use App\Http\Middleware\ValidateJsonApiHeaders;
 use App\Http\Responses\JsonApiValidationErrorResponse;
+use Illuminate\Auth\AuthenticationException;
+use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
 use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
-use PHPUnit\Util\InvalidJsonException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+
+use Symfony\Component\HttpFoundation\Response;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -21,10 +25,28 @@ return Application::configure(basePath: dirname(__DIR__))
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
+
+        $middleware->redirectUsersTo(function ($request) {
+            // $guard = Auth::guard('sanctum')->check();
+            // RedirectIfAuthenticated::redirectUsing(function ($request, $guard) {
+            //     return new Response(204);
+            // });
+            $guard = Auth::guard('sanctum')->check();
+            if ($guard) {
+                RedirectIfAuthenticated::redirectUsing(function ($request, $guard) {
+                    return response()->noContent();
+                });
+                return new Response(204);
+            }
+        });
+
         $middleware->api(append: [
             ValidateJsonApiHeaders::class,
             ValidateJsonApiDocument::class,
         ]);
+        // $middleware->alias([
+        //     "guest"
+        // ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (ValidationException $exception, Request $request) {
@@ -40,4 +62,9 @@ return Application::configure(basePath: dirname(__DIR__))
 
         $exceptions->renderable(fn(BadRequestHttpException $e) =>
         throw new App\Exceptions\JsonApi\BadRequestHttpException);
+
+        $exceptions->renderable(
+            fn(AuthenticationException $e) =>
+            throw new App\Exceptions\JsonApi\AuthenticationException
+        );
     })->create();

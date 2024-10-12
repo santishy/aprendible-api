@@ -3,13 +3,22 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Responses\TokenResponse;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
 
-class LoginController extends Controller
+class LoginController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('guest:sanctum'),
+        ];
+    }
     /**
      * Handle the incoming request.
      */
@@ -27,9 +36,8 @@ class LoginController extends Controller
                 "email" => [__('auth.failed')]
             ]);
         }
-        $token = $user->createToken($request->device_name);
-        return response([
-            "plain-text-token" => $token->plainTextToken
-        ]);
+
+
+        return new TokenResponse($user);
     }
 }

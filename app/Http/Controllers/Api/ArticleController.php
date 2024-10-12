@@ -7,16 +7,27 @@ use App\Http\Requests\SaveArticleRequest;
 use App\Http\Resources\ArticleCollection;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
+
 use Illuminate\Http\Request;
+use Illuminate\Routing\Controllers\HasMiddleware;
+use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\Str;
 
-class ArticleController extends Controller
+class ArticleController extends Controller implements HasMiddleware
 {
+    public static function middleware()
+    {
+        return [
+            new Middleware('auth:sanctum', only: ['store', 'update', 'destroy'])
+        ];
+    }
+
     public function index()
     {
         $articles = Article::query();
 
-        $articles->allowedIncludes(['category','author']);
+        $articles->allowedIncludes(['category', 'author']);
 
         $articles->allowedFilters(["title", "content", "year", "month", "categories"]);
 
@@ -32,7 +43,7 @@ class ArticleController extends Controller
     public function show($article): ArticleResource
     {
         $article = Article::where('slug', $article)
-            ->allowedIncludes(['category','author'])
+            ->allowedIncludes(['category', 'author'])
             ->sparseFieldset()
             ->firstOrFail();
 
@@ -41,18 +52,20 @@ class ArticleController extends Controller
 
     public function store(SaveArticleRequest $request)
     {
+        Gate::authorize('create', new Article);
         $article = Article::create($request->validated());
         return ArticleResource::make($article);
     }
 
     public function update(Article $article, SaveArticleRequest $request)
     {
-
+        Gate::authorize('update', $article);
         $article->update($request->validated());
         return ArticleResource::make($article);
     }
     public function destroy(Article $article)
     {
+        Gate::authorize('delete', $article);
         $article->delete();
         return response()->noContent();
     }

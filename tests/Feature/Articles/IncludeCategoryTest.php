@@ -76,19 +76,21 @@ class IncludeCategoryTest extends TestCase
         ]);
 
         $this->getJson($url)
-            ->assertJsonApiError([
-                "title" => "Bad request",
-                "detail" => "The included relationship 'unknown' is not allowed in the 'articles' resource"
-            ]);
+            ->assertJsonApiError(
+                title: "Bad request",
+                detail: "The included relationship 'unknown' is not allowed in the 'articles' resource",
+                status: "400"
+            );
 
         $url = route("api.v1.articles.index", [
             "include" => "unknown,unknown2"
         ]);
 
         $this->getJson($url)
-            ->assertJsonApiError([
-                "title" => "Bad request",
-                "detail" => "The included relationship 'unknown' is not allowed in the 'articles' resource"
-            ]);
+            ->assertJsonApiError(
+                title: "Bad request",
+                detail: "The included relationship 'unknown' is not allowed in the 'articles' resource",
+                status: "400"
+            );
     }
 }
