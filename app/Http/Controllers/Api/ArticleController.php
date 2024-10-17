@@ -7,7 +7,7 @@ use App\Http\Requests\SaveArticleRequest;
 use App\Http\Resources\ArticleCollection;
 use App\Http\Resources\ArticleResource;
 use App\Models\Article;
-
+use App\Models\Category;
 use Illuminate\Http\Request;
 use Illuminate\Routing\Controllers\HasMiddleware;
 use Illuminate\Routing\Controllers\Middleware;
@@ -53,14 +53,38 @@ class ArticleController extends Controller implements HasMiddleware
     public function store(SaveArticleRequest $request)
     {
         Gate::authorize('create', new Article);
-        $article = Article::create($request->validated());
+        $data = $request->validated()["data"];
+        $articleData = $data['attributes'];
+        $articleData['user_id'] =
+            $data['relationships']['author']['data']['id'];
+        $categorySlug =
+            $data['relationships']['category']['data']['id'];
+        $category = Category::whereSlug($categorySlug)->first();
+        $articleData['category_id'] = $category->id;
+        $article = Article::create($articleData);
         return ArticleResource::make($article);
     }
 
     public function update(Article $article, SaveArticleRequest $request)
     {
         Gate::authorize('update', $article);
-        $article->update($request->validated());
+        $data = $request->validated()["data"];
+        $articleData = $data['attributes'];
+        if (isset($data['relationships'])) {
+            if (isset($data['relationships']['author'])) {
+
+                $articleData['user_id'] =
+                    $data['relationships']['author']['data']['id'];
+            }
+            if (isset($data['relationships']['category'])) {
+
+                $categorySlug =
+                    $data['relationships']['category']['data']['id'];
+                $category = Category::whereSlug($categorySlug)->first();
+                $articleData['category_id'] = $category->id;
+            }
+        }
+        $article->update($articleData);
         return ArticleResource::make($article);
     }
     public function destroy(Article $article)

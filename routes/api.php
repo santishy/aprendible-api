@@ -7,7 +7,9 @@ use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\LogoutController;
+use App\Http\Controllers\Api\RegisterController;
 use App\Http\Middleware\ValidateJsonApiDocument;
+use App\Http\Middleware\ValidateJsonApiHeaders;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -42,6 +44,16 @@ Route::apiResource('authors', AuthorController::class)
     ->names('api.v1.authors')
     ->only('show', 'index');
 
-Route::withoutMiddleware(ValidateJsonApiDocument::class)->post("login", LoginController::class)->name('api.v1.login');
+// en la ruta login, logout y register como no esta aderido a la especificacion json:api se desabilita el middleware que valida que lleve ciertos datos. como los headers , el data, el type y el id..
 
-Route::withoutMiddleware(ValidateJsonApiDocument::class)->post("logout", LogoutController::class)->name('api.v1.logout');
+
+Route::withoutMiddleware([
+    ValidateJsonApiDocument::class,
+    ValidateJsonApiHeaders::class
+])->group(function () {
+    Route::post("login", LoginController::class)->name('api.v1.login');
+
+    Route::post("logout", LogoutController::class)->name('api.v1.logout');
+
+    Route::post("register", RegisterController::class)->name('api.v1.register');
+});

@@ -11,21 +11,19 @@ use Illuminate\Routing\Controllers\Middleware;
 use Laravel\Sanctum\PersonalAccessToken;
 use Tests\TestCase;
 
-class LoginTest extends TestCase implements HasMiddleware
+class LoginTest extends TestCase
 {
     use RefreshDatabase;
 
-    public static function middleware()
+    public function SetUp(): void
     {
-        return [
-            new Middleware('guest:sanctum')
-        ];
+        parent::setUp();
+        $this->withoutJsonApiHelpers();
     }
     public function test_can_issue_access_token(): void
     {
         //si falla alguna ruta en el futoro en postman imprimir route('login')
         $user = User::factory()->create();
-        $this->withoutJsonApiDocumentFormatting();
 
         $data = $this->validateCredentials(["email" => $user->email]);
 
@@ -39,7 +37,6 @@ class LoginTest extends TestCase implements HasMiddleware
     }
     public function test_only_one_access_token_can_issued_at_a_time(): void
     {
-        $this->withoutJsonApiDocumentFormatting();
         $user = User::factory()->create();
         //esto es asi, por sanctum:actionAs es un mockering y no crea el token por eso lo hacemos manual
         $plainTextToken = $user->createToken($user->name)->plainTextToken;
@@ -47,9 +44,9 @@ class LoginTest extends TestCase implements HasMiddleware
         $this->withHeader('Authorization', 'Bearer ' . $plainTextToken);
 
 
-        $response = $this->postJson(route('api.v1.login'))->dump()->assertNoContent();
+        $response = $this->postJson(route('api.v1.login'))->assertNoContent();
 
-        //$this->assertCount(1, PersonalAccessToken::findToken($plainTextToken)->first());
+        $this->assertCount(1, $user->tokens);
     }
 
     public function test_user_permissions_are_assigned_as_abilities_to_the_token()
@@ -64,8 +61,6 @@ class LoginTest extends TestCase implements HasMiddleware
         $user->givePermissionTo($permission2);
 
         $data = $this->validateCredentials(["email" => $user->email]);
-
-        $this->withoutJsonApiDocumentFormatting();
 
         $response = $this->postJson(route('api.v1.login'), $data);
 
@@ -90,16 +85,13 @@ class LoginTest extends TestCase implements HasMiddleware
     public function test_password_must_be_valid()
     {
         $user = User::factory()->create();
-        $this->withoutJsonApiDocumentFormatting();
         $data = $this->validateCredentials(["email" => $user->email, "password" => "incorrect"]);
-        $response = $this->postJson(route('api.v1.login'), $data)->dump();
+        $response = $this->postJson(route('api.v1.login'), $data);
         $response->assertJsonValidationErrorFor("email");
     }
 
     public function test_user_must_be_registered()
     {
-
-        $this->withoutJsonApiDocumentFormatting();
 
         $response = $this->postJson(
             route('api.v1.login'),
@@ -111,7 +103,7 @@ class LoginTest extends TestCase implements HasMiddleware
 
     public function test_email_must_be_required()
     {
-        $this->withoutJsonApiDocumentFormatting();
+
 
         $response = $this->postJson(
             route('api.v1.login'),
@@ -123,7 +115,7 @@ class LoginTest extends TestCase implements HasMiddleware
 
     public function test_email_must_be_valid()
     {
-        $this->withoutJsonApiDocumentFormatting();
+
 
         $response = $this->postJson(
             route('api.v1.login'),
@@ -134,7 +126,7 @@ class LoginTest extends TestCase implements HasMiddleware
     }
     public function test_password_must_be_required()
     {
-        $this->withoutJsonApiDocumentFormatting();
+
 
         $response = $this->postJson(
             route('api.v1.login'),
@@ -145,7 +137,6 @@ class LoginTest extends TestCase implements HasMiddleware
     }
     public function test_device_name_must_be_required()
     {
-        $this->withoutJsonApiDocumentFormatting();
 
         $response = $this->postJson(
             route('api.v1.login'),

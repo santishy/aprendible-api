@@ -18,6 +18,7 @@ class JsonApiTestResponse
             /** @var TestResponse $this */
 
             $pointer =  "/data/attributes/{$attribute}";
+
             if (Str::of($attribute)->startsWith("data")) {
                 $pointer = "/" . str_replace(".", "/", $attribute);
             } elseif (Str::of($attribute)->startsWith("relationships")) {
@@ -47,7 +48,7 @@ class JsonApiTestResponse
                     ]
                 ]);
             } catch (ExpectationFailedException $e) {
-                Assert::fail("failed to find a vali JSON:API error response"
+                Assert::fail("failed to find a valid JSON:API error response"
                     . PHP_EOL . PHP_EOL . $e->getMessage());
             }
 

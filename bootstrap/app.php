@@ -9,6 +9,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\App;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
@@ -44,27 +45,27 @@ return Application::configure(basePath: dirname(__DIR__))
             ValidateJsonApiHeaders::class,
             ValidateJsonApiDocument::class,
         ]);
-        // $middleware->alias([
-        //     "guest"
-        // ]);
+        $middleware->alias([
+            "guest" => \App\Http\Middleware\RedirectIfAuthenticated::class
+        ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
         $exceptions->render(function (ValidationException $exception, Request $request) {
 
-            if ($request->expectsJson() && !$request->routeIs('api.v1.login')) {
+            if ($request->isJsonApi()) {
                 return new JsonApiValidationErrorResponse($exception);
             }
         });
 
         $exceptions->renderable(function (NotFoundHttpException $e) {
-            throw new App\Exceptions\JsonApi\NotFoundHttpException;
+            throw new \App\Exceptions\JsonApi\NotFoundHttpException;
         });
 
         $exceptions->renderable(fn(BadRequestHttpException $e) =>
-        throw new App\Exceptions\JsonApi\BadRequestHttpException);
+        throw new \App\Exceptions\JsonApi\BadRequestHttpException);
 
         $exceptions->renderable(
             fn(AuthenticationException $e) =>
-            throw new App\Exceptions\JsonApi\AuthenticationException
+            throw new \App\Exceptions\JsonApi\AuthenticationException
         );
     })->create();

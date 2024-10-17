@@ -52,7 +52,7 @@ class CategoryRelationshipTest extends TestCase
         $article  = Article::factory()->create();
         $category = Category::factory()->create();
         $url = route('api.v1.articles.relationships.category', $article);
-        $this->withoutJsonApiDocumentFormatting();
+        //$this->withoutJsonApiDocumentFormatting(); se quito por que ... se cambio el formateo de peticiones adeheridos a la especificiacion json:api .. ya que esto si debe adeherise entonces vericicamos si la propiedad o mas bien el campo "data" viene por defecto no dar formato
         $response = $this->patchJson($url, [
             'data' => [
                 "type" => "categories",
@@ -77,7 +77,7 @@ class CategoryRelationshipTest extends TestCase
         $article = Article::factory()->create();
         $url = route('api.v1.articles.relationships.category', $article);
 
-        $this->withoutJsonApiDocumentFormatting();
+        // arriba en otro test explico el por que se comentariza esta linea $this->withoutJsonApiDocumentFormatting();
 
         $this->patchJson($url, [
             "data" => [
