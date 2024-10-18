@@ -2,10 +2,9 @@
 
 namespace Tests\Feature\Articles;
 
+use Tests\TestCase;
 use App\Models\Article;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
 class PaginateArticlesTest extends TestCase
 {
@@ -18,10 +17,10 @@ class PaginateArticlesTest extends TestCase
          */
         $articles = Article::factory()->count(6)->create();
         $url = route('api.v1.articles.index', [
-            "page" => [
-                "size" => 2,
-                "number" => 2
-            ]
+            'page' => [
+                'size' => 2,
+                'number' => 2,
+            ],
         ]);
 
         $response = $this->getJson($url);
@@ -38,7 +37,7 @@ class PaginateArticlesTest extends TestCase
 
         //verificando la estructura de links segun la especificacion json:api
         $response->assertJsonStructure([
-            "links" => ["first", "last", "prev", "next"]
+            'links' => ['first', 'last', 'prev', 'next'],
         ]);
 
         $firstLink = urldecode($response->json('links.first'));
@@ -46,55 +45,55 @@ class PaginateArticlesTest extends TestCase
         $prevLink = urldecode($response->json('links.prev'));
         $nextLink = urldecode($response->json('links.next'));
 
-        $this->assertStringContainsString("page[number]=1", $firstLink);
-        $this->assertStringContainsString("page[size]=2", $firstLink);
+        $this->assertStringContainsString('page[number]=1', $firstLink);
+        $this->assertStringContainsString('page[size]=2', $firstLink);
 
-        $this->assertStringContainsString("page[number]=3", $lastLink);
-        $this->assertStringContainsString("page[size]=2", $lastLink);
+        $this->assertStringContainsString('page[number]=3', $lastLink);
+        $this->assertStringContainsString('page[size]=2', $lastLink);
 
-        $this->assertStringContainsString("page[number]=1", $prevLink);
-        $this->assertStringContainsString("page[size]=2", $prevLink);
+        $this->assertStringContainsString('page[number]=1', $prevLink);
+        $this->assertStringContainsString('page[size]=2', $prevLink);
 
-        $this->assertStringContainsString("page[number]=3", $nextLink);
-        $this->assertStringContainsString("page[size]=2", $nextLink);
+        $this->assertStringContainsString('page[number]=3', $nextLink);
+        $this->assertStringContainsString('page[size]=2', $nextLink);
     }
+
     public function test_can_paginate_sorted_articles(): void
     {
         Article::factory()->create([
-            "title" => "c title"
+            'title' => 'c title',
         ]);
         Article::factory()->create([
-            "title" => "a title"
+            'title' => 'a title',
         ]);
         Article::factory()->create([
-            "title" => "b title"
+            'title' => 'b title',
         ]);
         $url = route('api.v1.articles.index', [
-            "sort" => "title",
-            "page" => [
-                "size" => 1,
-                "number" => 2
-            ]
+            'sort' => 'title',
+            'page' => [
+                'size' => 1,
+                'number' => 2,
+            ],
         ]);
 
         $response = $this->getJson($url);
 
-        $response->assertSee(["b title"]);
+        $response->assertSee(['b title']);
         $response->assertDontSee([
-            "a title",
-            "c title"
+            'a title',
+            'c title',
         ]);
-
 
         $firstLink = urldecode($response->json('links.first'));
         $lastLink = urldecode($response->json('links.last'));
         $prevLink = urldecode($response->json('links.prev'));
         $nextLink = urldecode($response->json('links.next'));
 
-        $this->assertStringContainsString("sort=title", $firstLink);
-        $this->assertStringContainsString("sort=title", $lastLink);
-        $this->assertStringContainsString("sort=title", $prevLink);
-        $this->assertStringContainsString("sort=title", $nextLink);
+        $this->assertStringContainsString('sort=title', $firstLink);
+        $this->assertStringContainsString('sort=title', $lastLink);
+        $this->assertStringContainsString('sort=title', $prevLink);
+        $this->assertStringContainsString('sort=title', $nextLink);
     }
 
     public function test_can_paginate_filtered_articles(): void
@@ -102,20 +101,20 @@ class PaginateArticlesTest extends TestCase
         Article::factory()->count(3)->create();
 
         Article::factory()->create([
-            "title" => "c laravel"
+            'title' => 'c laravel',
         ]);
         Article::factory()->create([
-            "title" => "a laravel"
+            'title' => 'a laravel',
         ]);
         Article::factory()->create([
-            "title" => "b laravel"
+            'title' => 'b laravel',
         ]);
         $url = route('api.v1.articles.index', [
-            "filter[title]" => "laravel",
-            "page" => [
-                "size" => 1,
-                "number" => 2
-            ]
+            'filter[title]' => 'laravel',
+            'page' => [
+                'size' => 1,
+                'number' => 2,
+            ],
         ]);
 
         $response = $this->getJson($url);
@@ -125,9 +124,9 @@ class PaginateArticlesTest extends TestCase
         $prevLink = urldecode($response->json('links.prev'));
         $nextLink = urldecode($response->json('links.next'));
 
-        $this->assertStringContainsString("filter[title]=laravel", $firstLink);
-        $this->assertStringContainsString("filter[title]=laravel", $lastLink);
-        $this->assertStringContainsString("filter[title]=laravel", $prevLink);
-        $this->assertStringContainsString("filter[title]=laravel", $nextLink);
+        $this->assertStringContainsString('filter[title]=laravel', $firstLink);
+        $this->assertStringContainsString('filter[title]=laravel', $lastLink);
+        $this->assertStringContainsString('filter[title]=laravel', $prevLink);
+        $this->assertStringContainsString('filter[title]=laravel', $nextLink);
     }
 }

@@ -2,11 +2,9 @@
 
 namespace Tests\Feature\Articles;
 
+use Tests\TestCase;
 use App\Models\Article;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Illuminate\Support\Facades\DB;
-use Tests\TestCase;
 
 class ListArticlesTest extends TestCase
 {
@@ -17,14 +15,15 @@ class ListArticlesTest extends TestCase
         //$this->withoutExceptionHandling();
         $article = Article::factory()->create();
 
-        $response = $this->getJson('/api/v1/articles/' . $article->getRouteKey());
+        $response = $this->getJson('/api/v1/articles/'.$article->getRouteKey());
 
         $response->assertJsonApiResource($article, [
-            "title" => $article->title,
-            "slug" => $article->slug,
-            "content" => $article->content
+            'title' => $article->title,
+            'slug' => $article->slug,
+            'content' => $article->content,
         ])->assertJsonApiRelationshipLinks($article, ['category', 'author']);
     }
+
     public function test_can_fetch_all_articles()
     {
         //$this->withoutExceptionHandling();
@@ -32,9 +31,9 @@ class ListArticlesTest extends TestCase
         $url = route('api.v1.articles.index');
         $response = $this->getJson($url);
         $response->assertJsonApiResourceCollection($articles, [
-            "title",
-            "slug",
-            "content",
+            'title',
+            'slug',
+            'content',
         ]);
     }
 
@@ -43,8 +42,8 @@ class ListArticlesTest extends TestCase
         $url = route('api.v1.articles.show', 'non-existing');
         $this->getJson($url)->assertJsonApiError(
             detail: "No records found with the id 'non-existing' in the 'articles' resource",
-            status: "404",
-            title: "Not found"
+            status: '404',
+            title: 'Not found'
         );
     }
 }

@@ -5,15 +5,16 @@ namespace App\Models;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 
 use App\Models\traits\HasUuid;
+use Laravel\Sanctum\HasApiTokens;
+use Illuminate\Notifications\Notifiable;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
-use Illuminate\Notifications\Notifiable;
-use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable
 {
-    use HasFactory, Notifiable, HasUuid, HasApiTokens;
-    public $resourceType = "authors";
+    use HasApiTokens, HasFactory, HasUuid, Notifiable;
+
+    public $resourceType = 'authors';
 
     /**
      * The attributes that are mass assignable.
@@ -48,10 +49,12 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+
     public function permissions()
     {
         return $this->belongsToMany(Permission::class);
     }
+
     public function givePermissionTo(Permission $permission)
     {
         $this->permissions()->syncWithoutDetaching($permission);

@@ -2,15 +2,15 @@
 
 namespace Tests\Feature\Auth;
 
-use App\Models\User;
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Laravel\Sanctum\PersonalAccessToken;
 use Tests\TestCase;
+use App\Models\User;
+use Laravel\Sanctum\PersonalAccessToken;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class LogoutTest extends TestCase
 {
     use RefreshDatabase;
+
     public function setUp(): void
     {
         parent::setUp();
@@ -23,8 +23,7 @@ class LogoutTest extends TestCase
         //esto es asi, por sanctum:actionAs es un mockering y no crea el token por eso lo hacemos manual
         $plainTextToken = $user->createToken($user->name)->plainTextToken;
         //se manda en el header la autenticacion por que actingAs lo hacia internamente para poder loguear
-        $this->withHeader('Authorization', 'Bearer ' . $plainTextToken);
-
+        $this->withHeader('Authorization', 'Bearer '.$plainTextToken);
 
         $response = $this->postJson(route('api.v1.logout'))->assertNoContent();
 

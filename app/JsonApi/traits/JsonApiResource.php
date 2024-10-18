@@ -2,23 +2,21 @@
 
 namespace App\JsonApi\traits;
 
-use App\Http\Resources\CategoryResource;
 use App\JsonApi\Document;
-use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Resources\MissingValue;
 
 trait JsonApiResource
 {
-
     abstract public function toJsonApi(): array;
-
 
     public static function identifier($resource)
     {
         return Document::type($resource->getResourceType())
             ->id($resource->getRouteKey())->toArray();
     }
+
     /**
      * Transform the resource into an array.
      *
@@ -40,7 +38,7 @@ trait JsonApiResource
             ->attributes($this->filterAttributes($this->toJsonApi()))
             ->relationshipLinks($this->getRelationshipsLinks())
             ->links([
-                "self" => route('api.v1.' . $this->resource->getResourceType() . '.show', $this->resource)
+                'self' => route('api.v1.'.$this->resource->getResourceType().'.show', $this->resource),
             ])
             ->get('data');
     }
@@ -48,8 +46,8 @@ trait JsonApiResource
     public function withResponse(Request $request, JsonResponse $response)
     {
         $response->header(
-            "Location",
-            route('api.v1.' . $this->getResourceType() . '.show', $this->resource)
+            'Location',
+            route('api.v1.'.$this->getResourceType().'.show', $this->resource)
         );
     }
 
@@ -64,14 +62,15 @@ trait JsonApiResource
              */
             function ($value) {
 
-                if (request()->isNotFilled("fields")) {
+                if (request()->isNotFilled('fields')) {
                     return true;
                 }
-                $fields = explode(",", request('fields.' . $this->getResourceType()));
+                $fields = explode(',', request('fields.'.$this->getResourceType()));
 
                 if ($value === $this->getRouteKey()) {
                     return in_array($this->getRouteKeyName(), $fields);
                 }
+
                 return $value;
             }
         );
@@ -81,10 +80,12 @@ trait JsonApiResource
     {
         return [];
     }
+
     public function getIncludes(): array
     {
         return [];
     }
+
     /**este metodo es llamado cuando ArticleResource::collection y se usa el path para obtener el resourceType */
     public static function collection($resources)
     {
@@ -96,11 +97,12 @@ trait JsonApiResource
                     if ($include->resource instanceof MissingValue) {
                         continue;
                     }
-                    $collection->with["included"][] = $include;
+                    $collection->with['included'][] = $include;
                 }
             }
         }
-        $collection->with["links"] = ["self" => $resources->path()];
+        $collection->with['links'] = ['self' => $resources->path()];
+
         return $collection;
     }
 }

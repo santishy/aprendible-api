@@ -10,12 +10,11 @@ class BadRequestHttpException extends Exception
     {
         // dd("hi");
         return response()->json([
-            "errors" =>
-            [[
-                "title" => "Bad request",
-                "detail" => $this->getMessage(),
-                "status" => "400"
-            ]]
+            'errors' => [[
+                'title' => 'Bad request',
+                'detail' => $this->getMessage(),
+                'status' => '400',
+            ]],
         ], 400);
     }
 }

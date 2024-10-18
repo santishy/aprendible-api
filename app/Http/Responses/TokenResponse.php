@@ -12,14 +12,16 @@ class TokenResponse implements Responsable
     {
         $this->user = $user;
     }
+
     public function toResponse($request)
     {
         $token = $this->user->createToken(
             $request->device_name,
             $this->user->permissions->pluck('name')->toArray()
         );
+
         return response([
-            "plain-text-token" => $token->plainTextToken
+            'plain-text-token' => $token->plainTextToken,
         ]);
     }
 }

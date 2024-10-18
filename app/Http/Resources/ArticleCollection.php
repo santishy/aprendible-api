@@ -15,10 +15,10 @@ class ArticleCollection extends ResourceCollection
     public function toArray(Request $request): array
     {
         return [
-            "data" => $this->collection,
-            "links" => [
-                "self" => route('api.v1.articles.index')
-            ]
+            'data' => $this->collection,
+            'links' => [
+                'self' => route('api.v1.articles.index'),
+            ],
         ];
     }
 }

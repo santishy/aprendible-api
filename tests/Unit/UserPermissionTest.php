@@ -2,10 +2,10 @@
 
 namespace Tests\Unit;
 
-use App\Models\Permission;
-use App\Models\User;
-use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 use Tests\TestCase;
+use App\Models\User;
+use App\Models\Permission;
+use Illuminate\Foundation\Testing\LazilyRefreshDatabase;
 
 class UserPermissionTest extends TestCase
 {
@@ -20,6 +20,7 @@ class UserPermissionTest extends TestCase
 
         $this->assertCount(1, $user->fresh()->permissions);
     }
+
     public function test_cannot_assign_the_same_permission_twice()
     {
         $user = User::factory()->create();

@@ -28,9 +28,10 @@ class RedirectIfAuthenticated
 
         foreach ($guards as $guard) {
             if (Auth::guard($guard)->check()) {
-                if ($guard === "sanctum") {
+                if ($guard === 'sanctum') {
                     return response()->noContent();
                 }
+
                 return redirect($this->redirectTo($request));
             }
         }
@@ -63,7 +64,7 @@ class RedirectIfAuthenticated
 
         foreach (['dashboard', 'home'] as $uri) {
             if (isset($routes[$uri])) {
-                return '/' . $uri;
+                return '/'.$uri;
             }
         }
 
@@ -73,7 +74,6 @@ class RedirectIfAuthenticated
     /**
      * Specify the callback that should be used to generate the redirect path.
      *
-     * @param  callable  $redirectToCallback
      * @return void
      */
     public static function redirectUsing(callable $redirectToCallback)

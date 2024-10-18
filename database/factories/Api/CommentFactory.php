@@ -1,13 +1,13 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\Api;
 
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
- * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Permission>
+ * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Api\Comment>
  */
-class PermissionFactory extends Factory
+class CommentFactory extends Factory
 {
     /**
      * Define the model's default state.
@@ -17,7 +17,7 @@ class PermissionFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => $this->faker->unique()->word(),
+            //
         ];
     }
 }

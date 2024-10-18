@@ -2,20 +2,20 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Http\Controllers\Controller;
-
 use Illuminate\Http\Request;
-use Illuminate\Routing\Controllers\HasMiddleware;
+use App\Http\Controllers\Controller;
 use Illuminate\Routing\Controllers\Middleware;
+use Illuminate\Routing\Controllers\HasMiddleware;
 
 class LogoutController extends Controller implements HasMiddleware
 {
     public static function middleware()
     {
         return [
-            new Middleware('auth:sanctum')
+            new Middleware('auth:sanctum'),
         ];
     }
+
     /**
      * Handle the incoming request.
      */

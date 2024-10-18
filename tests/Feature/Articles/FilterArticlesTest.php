@@ -2,11 +2,10 @@
 
 namespace Tests\Feature\Articles;
 
+use Tests\TestCase;
 use App\Models\Article;
 use App\Models\Category;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
 class FilterArticlesTest extends TestCase
 {
@@ -40,23 +39,24 @@ class FilterArticlesTest extends TestCase
     {
         $this->withoutExceptionHandling();
         $article = Article::factory()->create([
-            "content" => "Aprende laravel desde cero."
+            'content' => 'Aprende laravel desde cero.',
         ]);
         $article2 = Article::factory()->create([
-            "content" => "Otro articulo"
+            'content' => 'Otro articulo',
         ]);
         // articles?filter[content]=value
-        $url  = route('api.v1.articles.index', [
-            "filter" => [
-                "content" => "laravel"
-            ]
+        $url = route('api.v1.articles.index', [
+            'filter' => [
+                'content' => 'laravel',
+            ],
         ]);
 
         $response = $this->getJson($url);
         $response->assertJsonCount(1, 'data');
-        $response->assertSee("Aprende laravel desde cero.");
-        $response->assertDontSee("Otro articulo");
+        $response->assertSee('Aprende laravel desde cero.');
+        $response->assertDontSee('Otro articulo');
     }
+
     public function test_can_filter_articles_by_category(): void
     {
         $this->withoutExceptionHandling();
@@ -66,85 +66,88 @@ class FilterArticlesTest extends TestCase
 
         //articles?filter[categories]=cat-1
         $url = route('api.v1.articles.index', [
-            "filter" => [
-                "categories" => "cat-1,cat-2"
-            ]
+            'filter' => [
+                'categories' => 'cat-1,cat-2',
+            ],
         ]);
         $this->getJson($url)
-            ->assertJsonCount(4, "data")
+            ->assertJsonCount(4, 'data')
             ->assertSee($cat1->articles[0]->title)
             ->assertSee($cat1->articles[1]->title)
             ->assertSee($cat1->articles[2]->title)
             ->assertSee($cat2->articles[0]->title);
     }
+
     public function test_can_filter_articles_by_year(): void
     {
 
         $this->withoutExceptionHandling();
         $article = Article::factory()->create([
-            "title" => "article from 2021",
-            "created_at" => now()->year(2021)
+            'title' => 'article from 2021',
+            'created_at' => now()->year(2021),
         ]);
         $article2 = Article::factory()->create([
-            "title" => "article from 2022",
-            "created_at" => now()->year(2022)
+            'title' => 'article from 2022',
+            'created_at' => now()->year(2022),
         ]);
         // articles?filter[content]=value
-        $url  = route('api.v1.articles.index', [
-            "filter" => [
-                "year" => 2021
-            ]
+        $url = route('api.v1.articles.index', [
+            'filter' => [
+                'year' => 2021,
+            ],
         ]);
 
         $response = $this->getJson($url);
         $response->assertJsonCount(1, 'data');
-        $response->assertSee("article from 2021");
-        $response->assertDontSee("article from 2022");
+        $response->assertSee('article from 2021');
+        $response->assertDontSee('article from 2022');
     }
+
     public function test_can_filter_articles_by_month(): void
     {
 
         $article = Article::factory()->create([
-            "title" => "article from month 1",
-            "created_at" => now()->month(1)
+            'title' => 'article from month 1',
+            'created_at' => now()->month(1),
         ]);
         $article = Article::factory()->create([
-            "title" => "article from month 3",
-            "created_at" => now()->month(3)
+            'title' => 'article from month 3',
+            'created_at' => now()->month(3),
         ]);
         $article = Article::factory()->create([
-            "title" => "another article from month 3",
-            "created_at" => now()->month(3)
+            'title' => 'another article from month 3',
+            'created_at' => now()->month(3),
         ]);
 
         // articles?filter[month]=value
-        $url  = route('api.v1.articles.index', [
-            "filter" => [
-                "month" => 3
-            ]
+        $url = route('api.v1.articles.index', [
+            'filter' => [
+                'month' => 3,
+            ],
         ]);
 
         $response = $this->getJson($url);
         $response->assertJsonCount(2, 'data');
-        $response->assertSee("article from month 3");
-        $response->assertSee("another article from month 3");
-        $response->assertDontSee("article from month 1");
+        $response->assertSee('article from month 3');
+        $response->assertSee('another article from month 3');
+        $response->assertDontSee('article from month 1');
     }
+
     public function test_can_filter_articles_by_unknown_filters(): void
     {
         Article::factory()->count(2)->create();
         // articles?filter[unknown]=filter
-        $url  = route('api.v1.articles.index', [
-            "filter" => [
-                "unknown" => "filter"
-            ]
+        $url = route('api.v1.articles.index', [
+            'filter' => [
+                'unknown' => 'filter',
+            ],
         ]);
 
         $this->getJson($url)
             ->assertJsonApiError(
                 detail: "The filter 'unknown' is not allowed in the 'articles' resource",
-                status: "400",
-                title: "Bad request"
-            );;
+                status: '400',
+                title: 'Bad request'
+            );
     }
 }
