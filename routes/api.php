@@ -5,13 +5,14 @@ use App\Http\Controllers\Api\LoginController;
 use App\Http\Controllers\Api\AuthorController;
 use App\Http\Controllers\Api\LogoutController;
 use App\Http\Controllers\Api\ArticleController;
+use App\Http\Controllers\Api\CommentController;
 use App\Http\Middleware\ValidateJsonApiHeaders;
 use App\Http\Controllers\Api\CategoryController;
 use App\Http\Controllers\Api\RegisterController;
 use App\Http\Middleware\ValidateJsonApiDocument;
 use App\Http\Controllers\Api\ArticleAuthorController;
+use App\Http\Controllers\Api\CommentArticleController;
 use App\Http\Controllers\Api\ArticleCategoryController;
-use App\Http\Controllers\CommentController;
 
 Route::apiResource('articles', ArticleController::class)
     ->names('api.v1.articles'); //aqui es para agregar el api.v1 al estandar de rutas que se genera
@@ -20,11 +21,19 @@ Route::apiResource('categories', CategoryController::class)
     ->names('api.v1.categories')
     ->only('show', 'index');
 
+Route::patch('articles/{article}/relationships/category', [ArticleCategoryController::class, 'update'])
+    ->name('api.v1.articles.relationships.category');
+
 Route::get('articles/{article}/relationships/category', [ArticleCategoryController::class, 'index'])
     ->name('api.v1.articles.relationships.category');
 
-Route::patch('articles/{article}/relationships/category', [ArticleCategoryController::class, 'update'])
-    ->name('api.v1.articles.relationships.category');
+Route::get('comments/{comment}/relationships/article', [CommentArticleController::class, 'index'])
+    ->name('api.v1.comments.relationships.article');
+
+Route::get('comments/{comment}/article', [CommentArticleController::class, 'show'])
+    ->name('api.v1.comments.article');
+
+Route::patch('comments/{comment}/relationships/article', [CommentArticleController::class, 'update'])->name('api.v1.comments.relationships.article');
 
 Route::get('articles/{article}/category', [ArticleCategoryController::class, 'show'])
     ->name('api.v1.articles.category');
@@ -42,9 +51,9 @@ Route::apiResource('authors', AuthorController::class)
     ->names('api.v1.authors')
     ->only('show', 'index');
 
-Route::apiResource('comments', CommentController::class)
-    ->names('api.v1.comments');
+Route::apiResource('comments', CommentController::class)->names('api.v1.comments')->except('update');
 
+Route::patch('comments/{comment}', [CommentController::class, 'update'])->middleware('can:update,comment')->name('api.v1.comments.update');
 
 // en la ruta login, logout y register como no esta aderido a la especificacion json:api se desabilita el middleware que valida que lleve ciertos datos. como los headers , el data, el type y el id..
 
