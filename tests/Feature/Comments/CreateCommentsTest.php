@@ -36,7 +36,7 @@ class CreateCommentsTest extends TestCase
                 'author' => $user,
                 'article' => $article,
             ],
-        ])->dump()
+        ])
             ->assertCreated();
 
         $this->assertDatabaseCount('comments', 1);

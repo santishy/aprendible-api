@@ -13,6 +13,7 @@ class ArticleRelationshipTest extends TestCase
 
     public function test_can_fetch_the_associated_article_identifier(): void
     {
+
         $comment = Comment::factory()->create();
         $url = route('api.v1.comments.relationships.article', $comment);
 
@@ -73,12 +74,12 @@ class ArticleRelationshipTest extends TestCase
         $this->patchJson($url, [
             'data' => [
                 'type' => 'articles',
-                'id' => 'non-existing'
-            ]
+                'id' => 'non-existing',
+            ],
         ])->assertJsonApiValidationErrors('data.id');
         $this->assertDatabaseHas('comments', [
-            "article_id" => $comment->article->id,
-            "body" => $comment->body
+            'article_id' => $comment->article->id,
+            'body' => $comment->body,
         ]);
     }
 }

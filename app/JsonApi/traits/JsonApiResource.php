@@ -5,16 +5,25 @@ namespace App\JsonApi\traits;
 use App\JsonApi\Document;
 use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Support\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\Resources\MissingValue;
 
 trait JsonApiResource
 {
     abstract public function toJsonApi(): array;
 
-    public static function identifier($resource)
+    public static function identifier(Model $resource)
     {
         return Document::type($resource->getResourceType())
             ->id($resource->getRouteKey())->toArray();
+    }
+
+    public static function identifiers(Collection $resource)
+    {
+
+        return $resource->isEmpty() ? Document::empty() : Document::type($resource->first()->getResourceType())
+            ->ids($resource)->toArray();
     }
 
     /**
@@ -38,7 +47,7 @@ trait JsonApiResource
             ->attributes($this->filterAttributes($this->toJsonApi()))
             ->relationshipLinks($this->getRelationshipsLinks())
             ->links([
-                'self' => route('api.v1.'.$this->resource->getResourceType().'.show', $this->resource),
+                'self' => route('api.v1.' . $this->resource->getResourceType() . '.show', $this->resource),
             ])
             ->get('data');
     }
@@ -47,7 +56,7 @@ trait JsonApiResource
     {
         $response->header(
             'Location',
-            route('api.v1.'.$this->getResourceType().'.show', $this->resource)
+            route('api.v1.' . $this->getResourceType() . '.show', $this->resource)
         );
     }
 
@@ -65,7 +74,7 @@ trait JsonApiResource
                 if (request()->isNotFilled('fields')) {
                     return true;
                 }
-                $fields = explode(',', request('fields.'.$this->getResourceType()));
+                $fields = explode(',', request('fields.' . $this->getResourceType()));
 
                 if ($value === $this->getRouteKey()) {
                     return in_array($this->getRouteKeyName(), $fields);
@@ -101,7 +110,8 @@ trait JsonApiResource
                 }
             }
         }
-        $collection->with['links'] = ['self' => $resources->path()];
+        $path = request()->path();
+        $collection->with['links'] = ['self' => $path];
 
         return $collection;
     }

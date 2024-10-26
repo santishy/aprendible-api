@@ -16,12 +16,30 @@ class Document extends Collection
         ]);
     }
 
+    public static function empty(): Document
+    {
+
+        return new self([
+            'data' => [],
+        ]);
+    }
+
     /**Items viene de la clase Collection es una propiedad items[] */
     public function id($id): Document
     {
         if ($id) {
             $this->items['data']['id'] = (string) $id;
         }
+
+        return $this;
+    }
+
+    public function ids(Collection $resources): Document
+    {
+        $this->items['data'] = $resources->map(fn ($resource) => [
+            'id' => (string) $resource->getRouteKey(),
+            'type' => $resource->getResourceType(),
+        ]);
 
         return $this;
     }

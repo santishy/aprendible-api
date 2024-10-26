@@ -15,7 +15,7 @@ class ValidateJsonApiDocumentTest extends TestCase
     {
         $this->withoutJsonApiDocumentFormatting();
         parent::setUp();
-        Route::any('test_route', fn () => 'ok')
+        Route::any('test_route', fn() => 'ok')
             ->middleware(ValidateJsonApiDocument::class);
     }
 
@@ -55,8 +55,17 @@ class ValidateJsonApiDocumentTest extends TestCase
             'data' => [
                 'attributes' => ['name' => 'test'],
             ],
-        ])
-            ->assertJsonApiValidationErrors('data.type');
+        ])->assertJsonApiValidationErrors('data.type');
+
+        //se reproducio el error de que cuando se actualizen algunos recursos asociados a un recurso, ya que como el envoltorio cambia y el id y el type sobre todo en este vergo PATCH ... queda fuera de data.id o data.type, sino data.0.id o data.0.type y no deberia de ser requerido en ese caso
+        $this->patchJson('test_route', [
+            'data' => [
+                [
+                    'id' => 'string',
+                    'type' => 'resourceType'
+                ]
+            ]
+        ])->assertSuccessful();
     }
 
     public function test_data_type_must_be_string(): void
