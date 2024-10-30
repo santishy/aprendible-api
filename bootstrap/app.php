@@ -17,10 +17,10 @@ use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
-        web: __DIR__.'/../routes/web.php',
-        api: __DIR__.'/../routes/api.php',
+        web: __DIR__ . '/../routes/web.php',
+        api: __DIR__ . '/../routes/api.php',
         apiPrefix: 'api/v1',
-        commands: __DIR__.'/../routes/console.php',
+        commands: __DIR__ . '/../routes/console.php',
         health: '/up',
     )
     ->withMiddleware(function (Middleware $middleware) {
@@ -57,12 +57,13 @@ return Application::configure(basePath: dirname(__DIR__))
         });
 
         $exceptions->renderable(function (NotFoundHttpException $e) {
-            throw new \App\Exceptions\JsonApi\NotFoundHttpException;
+
+            throw new \App\Exceptions\JsonApi\NotFoundHttpException($e->getMessage());
         });
 
-        $exceptions->renderable(fn (BadRequestHttpException $e) => throw new \App\Exceptions\JsonApi\BadRequestHttpException);
+        $exceptions->renderable(fn(BadRequestHttpException $e) => throw new \App\Exceptions\JsonApi\BadRequestHttpException);
 
         $exceptions->renderable(
-            fn (AuthenticationException $e) => throw new \App\Exceptions\JsonApi\AuthenticationException
+            fn(AuthenticationException $e) => throw new \App\Exceptions\JsonApi\AuthenticationException
         );
     })->create();

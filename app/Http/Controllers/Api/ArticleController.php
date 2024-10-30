@@ -24,7 +24,7 @@ class ArticleController extends Controller implements HasMiddleware
     {
         $articles = Article::query();
 
-        $articles->allowedIncludes(['category', 'author']);
+        $articles->allowedIncludes(['category', 'author', 'comments']);
 
         $articles->allowedFilters(['title', 'content', 'year', 'month', 'categories']);
 
@@ -41,7 +41,7 @@ class ArticleController extends Controller implements HasMiddleware
     public function show($article): ArticleResource
     {
         $article = Article::where('slug', $article)
-            ->allowedIncludes(['category', 'author'])
+            ->allowedIncludes(['category', 'author', 'comments'])
             ->sparseFieldset()
             ->firstOrFail();
 

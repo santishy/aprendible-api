@@ -33,12 +33,16 @@ trait JsonApiResource
      */
     public function toArray(Request $request)
     {
+
         if (request()->filled('include')) {
             foreach ($this->getIncludes() as $include) {
-                if ($include->resource instanceof MissingValue) {
+                if ($include->resource instanceof Collection) {
+                    $include->resource->each(fn($rsc) => $this->with['included'][] = $rsc);
                     continue;
                 }
-                $this->with['included'][] = $include;
+                $include->resource instanceof MissingValue
+                    ?:
+                    $this->with['included'][] = $include;
             }
         }
 
@@ -101,12 +105,16 @@ trait JsonApiResource
 
         $collection = parent::collection($resources);
         if (request()->filled('include')) {
-            foreach ($resources as $resource) {
+
+            foreach ($collection->resource as $resource) { // antes era $resources pero al usar CommentResource::collection() dentro de otro resource en el metodo de getIncludes al parecer dejan de ser instancias de Resource y pasan a ser directamente los models y es por eso que se uso $collection->resource
                 foreach ($resource->getIncludes() as $include) {
-                    if ($include->resource instanceof MissingValue) {
+                    if ($include->resource instanceof Collection) {
+                        $include->resource->each(fn($rsc) =>   $collection->with['included'][] = $rsc);
                         continue;
                     }
-                    $collection->with['included'][] = $include;
+                    $include->resource instanceof MissingValue
+                        ?:
+                        $collection->with['included'][] = $include;
                 }
             }
         }
