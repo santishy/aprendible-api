@@ -15,28 +15,28 @@ class ValidateJsonApiDocumentTest extends TestCase
     {
         $this->withoutJsonApiDocumentFormatting();
         parent::setUp();
-        Route::any('test_route', fn() => 'ok')
+        Route::any('api/test-route', fn() => 'ok')
             ->middleware(ValidateJsonApiDocument::class);
     }
 
     public function test_data_is_required(): void
     {
 
-        $this->postJson('test_route', [])
+        $this->postJson('api/test-route', [])
             ->assertJsonApiValidationErrors('data');
 
-        $this->patchJson('test_route', [])
+        $this->patchJson('api/test-route', [])
             ->assertJsonApiValidationErrors('data');
     }
 
     public function test_data_must_be_an_array(): void
     {
-        $this->postJson('test_route', [
+        $this->postJson('api/test-route', [
             'data' => 'string',
         ])
             ->assertJsonApiValidationErrors('data');
 
-        $this->patchJson('test_route', [
+        $this->patchJson('api/test-route', [
             'data' => 'string',
         ])
             ->assertJsonApiValidationErrors('data');
@@ -44,21 +44,21 @@ class ValidateJsonApiDocumentTest extends TestCase
 
     public function test_data_type_is_required(): void
     {
-        $this->postJson('test_route', [
+        $this->postJson('api/test-route', [
             'data' => [
                 'attributes' => ['name' => 'test'],
             ],
         ])
             ->assertJsonApiValidationErrors('data.type');
 
-        $this->patchJson('test_route', [
+        $this->patchJson('api/test-route', [
             'data' => [
                 'attributes' => ['name' => 'test'],
             ],
         ])->assertJsonApiValidationErrors('data.type');
 
         //se reproducio el error de que cuando se actualizen algunos recursos asociados a un recurso, ya que como el envoltorio cambia y el id y el type sobre todo en este vergo PATCH ... queda fuera de data.id o data.type, sino data.0.id o data.0.type y no deberia de ser requerido en ese caso
-        $this->patchJson('test_route', [
+        $this->patchJson('api/test-route', [
             'data' => [
                 [
                     'id' => 'string',
@@ -70,14 +70,14 @@ class ValidateJsonApiDocumentTest extends TestCase
 
     public function test_data_type_must_be_string(): void
     {
-        $this->postJson('test_route', [
+        $this->postJson('api/test-route', [
             'data' => [
                 'type' => 1,
                 'attributes' => ['name' => 'test'],
             ],
         ])->assertJsonApiValidationErrors('data.type');
 
-        $this->patchJson('test_route', [
+        $this->patchJson('api/test-route', [
             'data' => [
                 'type' => 1,
                 'attributes' => ['name' => 'test'],
@@ -88,14 +88,14 @@ class ValidateJsonApiDocumentTest extends TestCase
 
     public function test_data_attributes_is_required(): void
     {
-        $this->postJson('test_route', [
+        $this->postJson('api/test-route', [
             'data' => [
                 'type' => 'string',
             ],
         ])
             ->assertJsonApiValidationErrors('data.attributes');
 
-        $this->patchJson('test_route', [
+        $this->patchJson('api/test-route', [
             'data' => [
                 'type' => 'string',
             ],
@@ -105,7 +105,7 @@ class ValidateJsonApiDocumentTest extends TestCase
 
     public function test_data_attributes_must_be_an_array(): void
     {
-        $this->postJson('test_route', [
+        $this->postJson('api/test-route', [
             'data' => [
                 'attributes' => 'string',
                 'type' => 'string',
@@ -113,7 +113,7 @@ class ValidateJsonApiDocumentTest extends TestCase
         ])
             ->assertJsonApiValidationErrors('data.attributes');
 
-        $this->patchJson('test_route', [
+        $this->patchJson('api/test-route', [
             'data' => [
                 'attributes' => 'string',
                 'type' => 'string',
@@ -123,7 +123,7 @@ class ValidateJsonApiDocumentTest extends TestCase
 
     public function test_data_id_is_required(): void
     {
-        $this->patchJson('/test_route', [
+        $this->patchJson('/api/test-route', [
             'data' => [
                 'type' => 'articles',
                 'attributes' => ['name' => 'test'],
@@ -133,7 +133,7 @@ class ValidateJsonApiDocumentTest extends TestCase
 
     public function test_data_id_must_be_a_string(): void
     {
-        $this->patchJson('/test_route', [
+        $this->patchJson('/api/test-route', [
             'data' => [
                 'id' => 1,
                 'type' => 'articles',
@@ -144,7 +144,7 @@ class ValidateJsonApiDocumentTest extends TestCase
 
     public function test_only_accepts_valid_json_api_document()
     {
-        $this->postJson('/test_route', [
+        $this->postJson('/api/test-route', [
             'data' => [
                 'type' => 'articles',
                 'attributes' => [
@@ -153,7 +153,7 @@ class ValidateJsonApiDocumentTest extends TestCase
             ],
         ])->assertSuccessFul();
 
-        $this->patchJson('/test_route', [
+        $this->patchJson('/api/test-route', [
             'data' => [
                 'id' => 'string',
                 'type' => 'articles',

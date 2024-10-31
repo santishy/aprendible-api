@@ -8,7 +8,7 @@ class BadRequestHttpException extends Exception
 {
     public function render($request)
     {
-        // dd("hi");
+
         return response()->json([
             'errors' => [[
                 'title' => 'Bad request',

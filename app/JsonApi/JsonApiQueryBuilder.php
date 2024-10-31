@@ -4,7 +4,7 @@ namespace App\JsonApi;
 
 use Closure;
 use Illuminate\Support\Str;
-use App\Exceptions\JsonApi\BadRequestHttpException;
+use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
 
 class JsonApiQueryBuilder
 {
@@ -42,7 +42,7 @@ class JsonApiQueryBuilder
                 $this->hasNamedScope($filter)
                     ? $this->{$filter}($value)
                     :
-                    $this->where($filter, 'LIKE', '%'.$value.'%');
+                    $this->where($filter, 'LIKE', '%' . $value . '%');
             }
 
             return $this;

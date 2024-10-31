@@ -18,4 +18,17 @@ class ExceptionsHandlerTest extends TestCase
             status: '404'
         );
     }
+
+    public function test_default_laravel_error_is_shown_to_request_outside_the_prefix_api()
+    {
+        $this->getJson('route/api')
+            ->assertJson([
+                'message' => 'The route route/api could not be found.'
+            ]);
+        $this->withoutJsonApiHeaders()
+            ->getJson('route/api')
+            ->assertJson([
+                'message' => 'The route route/api could not be found.'
+            ]);
+    }
 }

@@ -7,10 +7,33 @@ use Illuminate\Http\Request;
 
 class JsonApiRequest
 {
+
+    public function getResourceType(): Closure
+    {
+        return function () {
+            /** @var Request $this */
+            return $this->filled('data.type')
+                ? $this->input('data.type')
+                : (string) str($this->path())->after('api/v1/')->before('/');
+        };
+    }
+    public function getResourceId(): Closure
+    {
+        return function () {
+            /** @var Request $this */
+            $type = $this->getResourceType();
+            return $this->filled('data.id')
+                ? $this->input('data.id')
+                : (string) str($this->path())->after($type)->replace('/', '');
+        };
+    }
     public function isJsonApi(): Closure
     {
         return function () {
             /** @var Request $this */
+
+            if (!str($this->path())->startsWith('api')) return false;
+
             if ($this->header('accept') === 'application/vnd.api+json') {
                 return true;
             }

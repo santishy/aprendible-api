@@ -56,14 +56,18 @@ return Application::configure(basePath: dirname(__DIR__))
             }
         });
 
-        $exceptions->renderable(function (NotFoundHttpException $e) {
-
-            throw new \App\Exceptions\JsonApi\NotFoundHttpException($e->getMessage());
+        $exceptions->renderable(function (NotFoundHttpException $e, Request $request) {
+            $request->isJsonApi()
+                &&
+                throw new \App\Exceptions\JsonApi\NotFoundHttpException($e->getMessage());
         });
 
-        $exceptions->renderable(fn(BadRequestHttpException $e) => throw new \App\Exceptions\JsonApi\BadRequestHttpException);
+        $exceptions->renderable(fn(BadRequestHttpException $e, Request $request) => $request->isJsonApi()
+            && throw new \App\Exceptions\JsonApi\BadRequestHttpException($e->getMessage()));
 
         $exceptions->renderable(
-            fn(AuthenticationException $e) => throw new \App\Exceptions\JsonApi\AuthenticationException
+            fn(AuthenticationException $e, Request $request) =>
+            $request->isJsonApi()
+                && throw new \App\Exceptions\JsonApi\AuthenticationException
         );
     })->create();
