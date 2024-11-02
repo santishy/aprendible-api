@@ -2,13 +2,15 @@
 
 namespace App\Providers;
 
-use App\JsonApi\JsonApiRequest;
-use App\JsonApi\JsonApiQueryBuilder;
-use App\JsonApi\JsonApiTestResponse;
+use App\JsonApi\Exceptions\Handler;
 use Illuminate\Testing\TestResponse;
+use App\JsonApi\Mixins\JsonApiRequest;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\ServiceProvider;
 use Illuminate\Database\Eloquent\Builder;
+use App\JsonApi\Mixins\JsonApiQueryBuilder;
+use App\JsonApi\Mixins\JsonApiTestResponse;
+use Illuminate\Contracts\Debug\ExceptionHandler as ExceptionHandlerContract;
 
 class JsonApiServiceProvider extends ServiceProvider
 {
@@ -17,7 +19,7 @@ class JsonApiServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
-        //
+        $this->app->singleton(ExceptionHandlerContract::class, Handler::class);
     }
 
     /**

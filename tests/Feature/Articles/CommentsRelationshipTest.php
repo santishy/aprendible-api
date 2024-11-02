@@ -20,7 +20,7 @@ class CommentsRelationshipTest extends TestCase
 
         $response->assertJsonCount(2, 'data');
 
-        $article->comments->map(fn($comment) => $response->assertJsonFragment([
+        $article->comments->map(fn ($comment) => $response->assertJsonFragment([
             'type' => 'comments',
             'id' => (string) $comment->getRouteKey(),
         ]));
@@ -67,7 +67,7 @@ class CommentsRelationshipTest extends TestCase
                         'body' => $article->comments[1]->body,
                     ],
                 ],
-            ]
+            ],
         ]);
     }
 
@@ -81,20 +81,20 @@ class CommentsRelationshipTest extends TestCase
         $url = route('api.v1.articles.relationships.comments', $article);
 
         $response = $this->patchJson($url, [
-            'data' => $comments->map(fn($comment) => [
+            'data' => $comments->map(fn ($comment) => [
                 'id' => $comment->getRouteKey(),
                 'type' => 'comments',
-            ])
+            ]),
         ])->dump();
         $response->assertJsonCount(2, 'data');
-        $comments->map(fn($comment) => $response->assertJsonFragment([
+        $comments->map(fn ($comment) => $response->assertJsonFragment([
             'id' => (string) $comment->getRouteKey(),
-            'type' => $comment->getResourceType()
+            'type' => $comment->getResourceType(),
         ]));
 
-        $comments->map(fn($comment) => $this->assertDatabaseHas('comments', [
+        $comments->map(fn ($comment) => $this->assertDatabaseHas('comments', [
             'body' => $comment->body,
-            'article_id' => $article->id
+            'article_id' => $article->id,
         ]));
     }
 
@@ -108,9 +108,9 @@ class CommentsRelationshipTest extends TestCase
             'data' => [
                 [
                     'id' => 'doesnt-existing',
-                    'type' => 'comments'
-                ]
-            ]
+                    'type' => 'comments',
+                ],
+            ],
         ])->assertJsonApiValidationErrors('data.0.id');
 
         $this->assertDatabaseEmpty('comments');

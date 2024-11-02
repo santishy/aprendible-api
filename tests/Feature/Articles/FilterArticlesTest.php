@@ -147,7 +147,7 @@ class FilterArticlesTest extends TestCase
             ->assertJsonApiError(
                 detail: "The filter 'unknown' is not allowed in the 'articles' resource",
                 status: '400',
-                title: 'Bad request'
+                title: 'Bad Request'
             );
     }
 }

@@ -2,9 +2,8 @@
 
 namespace Tests\Feature;
 
-use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
+use Illuminate\Foundation\Testing\RefreshDatabase;
 
 class ExceptionsHandlerTest extends TestCase
 {
@@ -14,7 +13,7 @@ class ExceptionsHandlerTest extends TestCase
     {
         $this->getJson('api/route')->assertJsonApiError(
             detail: 'The route api/route could not be found.',
-            title: 'Not found',
+            title: 'Not Found',
             status: '404'
         );
     }
@@ -23,12 +22,12 @@ class ExceptionsHandlerTest extends TestCase
     {
         $this->getJson('route/api')
             ->assertJson([
-                'message' => 'The route route/api could not be found.'
+                'message' => 'The route route/api could not be found.',
             ]);
         $this->withoutJsonApiHeaders()
             ->getJson('route/api')
             ->assertJson([
-                'message' => 'The route route/api could not be found.'
+                'message' => 'The route route/api could not be found.',
             ]);
     }
 }

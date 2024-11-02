@@ -4,8 +4,8 @@ namespace Tests\Feature;
 
 use Tests\TestCase;
 use Illuminate\Support\Facades\Route;
-use App\Http\Middleware\ValidateJsonApiDocument;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use App\JsonApi\Http\Middleware\ValidateJsonApiDocument;
 
 class ValidateJsonApiDocumentTest extends TestCase
 {
@@ -15,7 +15,7 @@ class ValidateJsonApiDocumentTest extends TestCase
     {
         $this->withoutJsonApiDocumentFormatting();
         parent::setUp();
-        Route::any('api/test-route', fn() => 'ok')
+        Route::any('api/test-route', fn () => 'ok')
             ->middleware(ValidateJsonApiDocument::class);
     }
 
@@ -62,9 +62,9 @@ class ValidateJsonApiDocumentTest extends TestCase
             'data' => [
                 [
                     'id' => 'string',
-                    'type' => 'resourceType'
-                ]
-            ]
+                    'type' => 'resourceType',
+                ],
+            ],
         ])->assertSuccessful();
     }
 

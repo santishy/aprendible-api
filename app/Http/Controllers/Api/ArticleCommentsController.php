@@ -3,10 +3,10 @@
 namespace App\Http\Controllers\Api;
 
 use App\Models\Article;
-use App\Http\Controllers\Controller;
-use App\Http\Resources\CommentResource;
 use App\Models\Comment;
 use Illuminate\Http\Request;
+use App\Http\Controllers\Controller;
+use App\Http\Resources\CommentResource;
 
 class ArticleCommentsController extends Controller
 {
@@ -24,7 +24,7 @@ class ArticleCommentsController extends Controller
     {
 
         $request->validate([
-            'data.*.id' => 'exists:comments,id'
+            'data.*.id' => 'exists:comments,id',
         ]);
         //$request->input('data.*.id') con esto obtengo todos los ids en un simple array
         $comments = Comment::find($request->input('data.*.id'));

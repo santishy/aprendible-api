@@ -6,14 +6,15 @@ use Illuminate\Foundation\Application;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Validation\ValidationException;
 use Symfony\Component\HttpFoundation\Response;
-use App\Http\Middleware\ValidateJsonApiHeaders;
-use App\Http\Middleware\ValidateJsonApiDocument;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
-use App\Http\Responses\JsonApiValidationErrorResponse;
+use App\JsonApi\Http\Middleware\ValidateJsonApiHeaders;
 use Illuminate\Auth\Middleware\RedirectIfAuthenticated;
-use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
-use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use App\JsonApi\Http\Middleware\ValidateJsonApiDocument;
+use Symfony\Component\HttpKernel\Exception\HttpException;
+// use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
+// use Symfony\Component\HttpKernel\Exception\BadRequestHttpException;
+use App\JsonApi\Http\Responses\JsonApiValidationErrorResponse;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -49,25 +50,23 @@ return Application::configure(basePath: dirname(__DIR__))
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions) {
-        $exceptions->render(function (ValidationException $exception, Request $request) {
+        /*  $exceptions->render(function (ValidationException $exception, Request $request) {
 
             if ($request->isJsonApi()) {
                 return new JsonApiValidationErrorResponse($exception);
             }
-        });
+        });*/
+        // $exceptions->renderable(function (NotFoundHttpException $e, Request $request) {
+        //     $request->isJsonApi()
+        //         &&
+        //         throw new \App\Exceptions\JsonApi\NotFoundHttpException($e->getMessage());
+        // });
 
-        $exceptions->renderable(function (NotFoundHttpException $e, Request $request) {
-            $request->isJsonApi()
-                &&
-                throw new \App\Exceptions\JsonApi\NotFoundHttpException($e->getMessage());
-        });
-
-        $exceptions->renderable(fn(BadRequestHttpException $e, Request $request) => $request->isJsonApi()
-            && throw new \App\Exceptions\JsonApi\BadRequestHttpException($e->getMessage()));
+        /*$exceptions->renderable(fn (HttpException $e, Request $request) => $request->isJsonApi()
+            && throw new \App\JsonApi\Exceptions\HttpException($e));
 
         $exceptions->renderable(
-            fn(AuthenticationException $e, Request $request) =>
-            $request->isJsonApi()
-                && throw new \App\Exceptions\JsonApi\AuthenticationException
-        );
+            fn (AuthenticationException $e, Request $request) => $request->isJsonApi()
+                && throw new \App\JsonApi\Exceptions\AuthenticationException
+        );*/
     })->create();

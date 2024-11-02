@@ -34,7 +34,7 @@ class ListCommentTest extends TestCase
         $this->getJson($url)->assertJsonApiError(
             detail: "No records found with the id 'non-existing' in the 'comments' resource",
             status: '404',
-            title: 'Not found'
+            title: 'Not Found'
         );
     }
 }

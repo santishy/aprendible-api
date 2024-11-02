@@ -1,6 +1,6 @@
 <?php
 
-namespace App\JsonApi;
+namespace App\JsonApi\Mixins;
 
 use Closure;
 use Illuminate\Support\Str;
@@ -42,7 +42,7 @@ class JsonApiQueryBuilder
                 $this->hasNamedScope($filter)
                     ? $this->{$filter}($value)
                     :
-                    $this->where($filter, 'LIKE', '%' . $value . '%');
+                    $this->where($filter, 'LIKE', '%'.$value.'%');
             }
 
             return $this;

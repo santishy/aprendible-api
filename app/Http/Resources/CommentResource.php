@@ -20,7 +20,7 @@ class CommentResource extends JsonResource
     {
         return [
             'author',
-            'article'
+            'article',
         ];
     }
 }

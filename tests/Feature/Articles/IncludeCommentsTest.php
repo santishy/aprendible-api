@@ -2,10 +2,9 @@
 
 namespace Tests\Feature\Articles;
 
+use Tests\TestCase;
 use App\Models\Article;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
-use Tests\TestCase;
 
 class IncludeCommentsTest extends TestCase
 {
@@ -17,19 +16,19 @@ class IncludeCommentsTest extends TestCase
 
         $url = route('api.v1.articles.show', [
             'article' => $article,
-            'include' => 'comments'
+            'include' => 'comments',
         ]);
 
         $response = $this->getJson($url);
 
         $response->assertJsonCount(2, 'included');
 
-        $article->comments->map(fn($comment) => $response->assertJsonFragment([
+        $article->comments->map(fn ($comment) => $response->assertJsonFragment([
             'type' => 'comments',
             'id' => (string) $comment->getRouteKey(),
             'attributes' => [
-                'body' => $comment->body
-            ]
+                'body' => $comment->body,
+            ],
         ]));
     }
 
@@ -39,7 +38,7 @@ class IncludeCommentsTest extends TestCase
         $article2 = Article::factory()->hasComments(2)->create();
 
         $url = route('api.v1.articles.index', [
-            'include' => 'comments'
+            'include' => 'comments',
         ]);
 
         $response = $this->getJson($url);
