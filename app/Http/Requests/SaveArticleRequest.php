@@ -24,6 +24,8 @@ class SaveArticleRequest extends FormRequest
     public function rules(): array
     {
         return [
+            'data.type' => ['required', 'in:articles'],
+            'data.id' => ['exists:articles,slug', Rule::requiredIf($this->route('article'))],
             'data.attributes.title' => ['required', 'min:4'],
             'data.attributes.slug' => [
                 'required',
@@ -36,7 +38,10 @@ class SaveArticleRequest extends FormRequest
                 Rule::requiredIf(! $this->route('article')),
                 Rule::exists('categories', 'slug'),
             ],
-            'data.relationships.author.data.id' => [],
+            'data.relationships.author.data.id' => [
+                Rule::requiredIf(! $this->route('article')),
+                Rule::exists('users', 'id'),
+            ],
         ];
     }
 }

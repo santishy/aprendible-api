@@ -2,16 +2,17 @@
 
 namespace App\Console\Commands;
 
-use App\Models\Article;
-use App\Models\Category;
-use App\Models\Comment;
 use App\Models\User;
+use App\Models\Article;
+use App\Models\Comment;
+use App\Models\Category;
 use Illuminate\Console\Command;
 use Illuminate\Console\ConfirmableTrait;
 
 class GenerateTestingData extends Command
 {
     use ConfirmableTrait;
+
     /**
      * The name and signature of the console command.
      *
@@ -31,7 +32,7 @@ class GenerateTestingData extends Command
      */
     public function handle()
     {
-        if (!$this->confirmToProceed()) {
+        if (! $this->confirmToProceed()) {
             return 1;
         }
         User::query()->delete();
@@ -41,7 +42,7 @@ class GenerateTestingData extends Command
 
         $user = User::factory()->hasArticles(1)->create([
             'name' => 'Santiago Ochoa',
-            'email' => 'santi_shy@hotmail.com'
+            'email' => 'santi_shy@hotmail.com',
         ]);
 
         $articles = Article::factory(14)->hasComments(5)->create();
@@ -55,7 +56,7 @@ class GenerateTestingData extends Command
         $this->line($user->articles->first()->slug);
 
         $this->info('Category ID');
-        $this->line($articles->first()->category->id);
+        $this->line($articles->first()->category->slug);
 
         $this->info('Comment ID:');
         $this->line($articles->first()->comments->random()->id);

@@ -37,7 +37,7 @@ trait JsonApiResource
         if (request()->filled('include')) {
             foreach ($this->getIncludes() as $include) {
                 if ($include->resource instanceof Collection) {
-                    $include->resource->each(fn ($rsc) => $this->with['included'][] = $rsc);
+                    $include->resource->each(fn($rsc) => $this->with['included'][] = $rsc);
 
                     continue;
                 }
@@ -52,17 +52,21 @@ trait JsonApiResource
             ->attributes($this->filterAttributes($this->toJsonApi()))
             ->relationshipLinks($this->getRelationshipsLinks())
             ->links([
-                'self' => route('api.v1.'.$this->resource->getResourceType().'.show', $this->resource),
+                'self' => route('api.v1.' . $this->resource->getResourceType() . '.show', $this->resource),
             ])
             ->get('data');
     }
 
     public function withResponse(Request $request, JsonResponse $response)
     {
-        $response->header(
-            'Location',
-            route('api.v1.'.$this->getResourceType().'.show', $this->resource)
-        );
+
+        if ($response->status() === 201) {
+
+            $response->header(
+                'Location',
+                route('api.v1.' . $this->getResourceType() . '.show', $this->resource)
+            );
+        }
     }
 
     public function filterAttributes(array $attributes): array
@@ -79,7 +83,7 @@ trait JsonApiResource
                 if (request()->isNotFilled('fields')) {
                     return true;
                 }
-                $fields = explode(',', request('fields.'.$this->getResourceType()));
+                $fields = explode(',', request('fields.' . $this->getResourceType()));
 
                 if ($value === $this->getRouteKey()) {
                     return in_array($this->getRouteKeyName(), $fields);
@@ -110,7 +114,7 @@ trait JsonApiResource
             foreach ($collection->resource as $resource) { // antes era $resources pero al usar CommentResource::collection() dentro de otro resource en el metodo de getIncludes al parecer dejan de ser instancias de Resource y pasan a ser directamente los models y es por eso que se uso $collection->resource
                 foreach ($resource->getIncludes() as $include) {
                     if ($include->resource instanceof Collection) {
-                        $include->resource->each(fn ($rsc) => $collection->with['included'][] = $rsc);
+                        $include->resource->each(fn($rsc) => $collection->with['included'][] = $rsc);
 
                         continue;
                     }
