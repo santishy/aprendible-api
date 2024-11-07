@@ -26,9 +26,9 @@ class ArticleController extends Controller implements HasMiddleware
 
         $articles->allowedIncludes(['category', 'author', 'comments']);
 
-        $articles->allowedFilters(['title', 'content', 'year', 'month', 'categories']);
+        $articles->allowedFilters(['title', 'content', 'year', 'month', 'categories', 'authors']);
 
-        $articles->allowedSorts(['title', 'content']);
+        $articles->allowedSorts(['title', 'content', 'created-at']);
 
         $articles->sparseFieldset();
 
@@ -69,6 +69,7 @@ class ArticleController extends Controller implements HasMiddleware
 
     public function update(Article $article, SaveArticleRequest $request)
     {
+
         Gate::authorize('update', $article);
 
         $articleData = $request->getAttributes();

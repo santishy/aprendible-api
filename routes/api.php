@@ -13,6 +13,7 @@ use App\Http\Controllers\Api\CommentAuthorController;
 use App\Http\Controllers\Api\CommentArticleController;
 use App\Http\Controllers\Api\ArticleCategoryController;
 use App\Http\Controllers\Api\ArticleCommentsController;
+use App\Http\Controllers\Api\AuthenticatedUserController;
 use App\JsonApi\Http\Middleware\ValidateJsonApiHeaders;
 use App\JsonApi\Http\Middleware\ValidateJsonApiDocument;
 
@@ -95,6 +96,10 @@ Route::withoutMiddleware([
     ValidateJsonApiDocument::class,
     ValidateJsonApiHeaders::class,
 ])->group(function () {
+
+    Route::get('user', AuthenticatedUserController::class)->middleware('auth:sanctum')
+        ->name('api.v1.auth.user');
+
     Route::post('login', LoginController::class)->name('api.v1.login');
 
     Route::post('logout', LogoutController::class)->name('api.v1.logout');

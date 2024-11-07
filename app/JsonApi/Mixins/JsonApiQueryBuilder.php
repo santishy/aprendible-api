@@ -20,7 +20,7 @@ class JsonApiQueryBuilder
                     if (! in_array($sortField, $allowedSorts)) {
                         throw new BadRequestHttpException("The sort field '{$sortField}' is not allowed in the '{$this->getResourceType()}' resource");
                     }
-
+                    $sortField = str($sortField)->replace('-', '_');
                     $this->orderBy($sortField, $sortDirection);
                 }
             }
@@ -42,7 +42,7 @@ class JsonApiQueryBuilder
                 $this->hasNamedScope($filter)
                     ? $this->{$filter}($value)
                     :
-                    $this->where($filter, 'LIKE', '%'.$value.'%');
+                    $this->where($filter, 'LIKE', '%' . $value . '%');
             }
 
             return $this;
@@ -63,7 +63,9 @@ class JsonApiQueryBuilder
             if (! in_array($keyRouteName, $columns)) {
                 $columns[] = $keyRouteName;
             }
-
+            $columns = array_map(function ($field) {
+                return str($field)->replace('-', '_');
+            }, $columns);
             return $this->addSelect($columns);
         };
     }

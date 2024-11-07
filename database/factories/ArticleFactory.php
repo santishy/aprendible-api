@@ -27,6 +27,8 @@ class ArticleFactory extends Factory
             'content' => $this->faker->paragraphs(3, true),
             'category_id' => Category::factory(),
             'user_id' => User::factory(),
+            'created_at' => $this->faker->dateTimeBetween('-2 year'),
+            'updated_at' => $this->faker->dateTimeBetween('-1 year')
         ];
     }
 }

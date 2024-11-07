@@ -15,6 +15,8 @@ class ArticleResource extends JsonResource
             'title' => $this->resource->title,
             'slug' => $this->resource->slug,
             'content' => $this->resource->content,
+            'created-at' => $this->resource->created_at?->toAtomString(),
+            'update-at' => $this->resource->updated_at?->toAtomString(),
         ];
     }
 
